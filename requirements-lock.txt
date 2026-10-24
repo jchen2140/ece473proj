@@ -1,0 +1,9 @@
+# Exact environment used for the pilot (Python 3.10, macOS arm64).
+attrs==26.1.0
+cffi==2.1.1
+eccodes==2.50.0
+eccodeslib==2.48.0.26
+eckitlib==2.1.1.26
+findlibs==0.1.3
+numpy==2.2.6
+pycparser==3.11

@@ -1,0 +1,59 @@
+{
+  "evaluation_dates": [
+    "2026-07-20",
+    "2026-07-21",
+    "2026-07-22",
+    "2026-07-23",
+    "2026-07-24",
+    "2026-07-25",
+    "2026-07-26"
+  ],
+  "shared_contracts": 42,
+  "excluded_missing_market_quotes": 0,
+  "climatology": {
+    "station": {
+      "station_id": "USW00094728",
+      "latitude": 40.7789,
+      "longitude": -73.9692,
+      "name": "NY CITY CNTRL PARK",
+      "original_metadata_record": "USW00094728  40.7789  -73.9692   42.7 NY NY CITY CNTRL PARK                 HCN 72506"
+    },
+    "training_years": [
+      1991,
+      2020
+    ],
+    "calendar_window": "+/-15 days",
+    "accepted_history_rows_1991_onward": 13077,
+    "rejected_missing_or_quality_flagged_all_years": 52
+  },
+  "metrics": {
+    "ensemble": {
+      "binary_contract_count": 42,
+      "brier_mean_per_binary_contract": 0.14325355532431494,
+      "binary_log_loss_mean": 0.4300661981532316,
+      "log_loss_clip_epsilon": 1e-06,
+      "event_count": 7
+    },
+    "climatology": {
+      "binary_contract_count": 42,
+      "brier_mean_per_binary_contract": 0.1687016390554372,
+      "binary_log_loss_mean": 0.5389859504964536,
+      "log_loss_clip_epsilon": 1e-06,
+      "event_count": 7
+    },
+    "market": {
+      "binary_contract_count": 42,
+      "brier_mean_per_binary_contract": 0.12042559523809526,
+      "binary_log_loss_mean": 0.3676950721842129,
+      "log_loss_clip_epsilon": 1e-06,
+      "event_count": 7
+    }
+  },
+  "cautions": [
+    "Seven events is a smoke test, not a reliable ranking of models.",
+    "Six contracts in each event are dependent; confidence intervals must resample events/days.",
+    "Retrospectively revised GHCN records are used for historical climatology; this is not a vintage-locked archive.",
+    "Probabilities are uncalibrated; no bias/spread fit or market-making simulation is included.",
+    "GHCN is not a replacement for the exact NWS report used in settlement."
+  ]
+}
