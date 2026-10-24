@@ -7,6 +7,7 @@ import math
 from collections import defaultdict
 
 from collect_nyc import DATA, fetch, hits, write_csv
+from climatology import SeasonalClimatology, seasonal_distance
 
 GHCN = 'https://www.ncei.noaa.gov/pub/data/ghcn/daily'
 STATION = 'USW00094728'
@@ -52,20 +53,9 @@ def parse_tmax(text):
     return sorted(rows, key=lambda r: r['date']), rejected
 
 
-def seasonal_distance(a, b):
-    # Reference leap year keeps month/day alignment stable across calendar years.
-    x = dt.date(2000, a.month, a.day).timetuple().tm_yday
-    y = dt.date(2000, b.month, b.day).timetuple().tm_yday
-    delta = abs(x-y)
-    return min(delta, 366-delta)
-
-
 def training_sample(history, target):
     """Fixed 1991–2020 baseline, +/-15 calendar days, excluding target/future data."""
-    return [r for r in history
-            if 1991 <= int(r['date'][:4]) <= 2020
-            and dt.date.fromisoformat(r['date']) < target
-            and seasonal_distance(dt.date.fromisoformat(r['date']), target) <= 15]
+    return SeasonalClimatology(history).sample(target)
 
 
 def read_csv(name):
@@ -105,6 +95,7 @@ def main():
     history, rejected = parse_tmax(cached_text(f'ghcn/{STATION}.dly', f'{GHCN}/all/{STATION}.dly'))
     history = [r for r in history if '1991-01-01' <= r['date'] <= '2026-12-31']
     write_csv('historical_tmax.csv', history)
+    baseline = SeasonalClimatology(history)
     matched = read_csv('matched.csv')
     groups = defaultdict(list)
     for row in matched:
@@ -112,14 +103,14 @@ def main():
     enriched, baseline_info, observation_checks = [], [], []
     history_by_date = {r['date']: r for r in history}
     for date, rows in sorted(groups.items()):
-        sample = training_sample(history, dt.date.fromisoformat(date))
+        sample = baseline.sample(dt.date.fromisoformat(date))
         years = {r['date'][:4] for r in sample}
         if len(sample) < 800 or len(years) != 30:
             raise ValueError(f'Insufficient historical climatology for {date}')
         assert max(r['date'] for r in sample) < date
         probabilities = []
         for row in rows:
-            p = sum(hits(strike(row), r['rounded_tmax_f']) for r in sample)/len(sample)
+            p = baseline.probability(dt.date.fromisoformat(date), strike(row))
             probabilities.append(p)
             enriched.append({**row, 'climatology_probability': p, 'climatology_sample_count': len(sample),
                              'climatology_training_start_year': 1991, 'climatology_training_end_year': 2020,

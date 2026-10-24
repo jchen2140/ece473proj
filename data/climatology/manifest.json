@@ -1,0 +1,25 @@
+{
+  "station_id": "USW00094728",
+  "training_years": [
+    1991,
+    2020
+  ],
+  "calendar_window_days_each_side": 15,
+  "training_records": 10958,
+  "expected_training_days": 10958,
+  "missing_or_rejected_dates": [],
+  "post_training_records": 2119,
+  "training_csv_sha256": "f2ec66ca0b77383bfc510a3802eeef5abc502d8cb23a04613caa822131f6878d",
+  "source": {
+    "url": "https://www.ncei.noaa.gov/pub/data/ghcn/daily/all/USW00094728.dly",
+    "retrieved_at": "2026-10-24T20:30:23.506763+00:00",
+    "last_modified": "Sat, 24 Oct 2026 00:15:04 GMT"
+  },
+  "method": "Empirical distribution of rounded daily TMAX in a +/-15-day seasonal window, 1991-2020 only.",
+  "leap_day_policy": "Month/day distance on circular 366-day reference year; non-leap years contribute no February 29 record.",
+  "limitations": [
+    "Current revised GHCN archive, not an as-issued historical snapshot.",
+    "No trend, bias or spread adjustment fitted.",
+    "Historical station daily maxima, not the exact original CLI settlement releases."
+  ]
+}

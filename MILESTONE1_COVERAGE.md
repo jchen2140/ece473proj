@@ -15,6 +15,8 @@ The project one-pager schedules the first two weeks as October 6–12 and Octobe
 
 **Jessie's first two weeks are implemented for NYC.** The data and code also cover the other teammates' data, baseline, and evaluation tasks for this city. The eventual multi-city study remains outside this completed pilot.
 
+The expanded [week 2 baseline guide](CLIMATOLOGY_BASELINE.md) covers the reusable model and a dedicated 10,958-record training dataset with complete coverage, separate post-training records, monthly/seasonal summaries, and provenance manifest in `data/climatology/`.
+
 ## Verified pilot results
 
 The completed run contains 42 contracts, 2,170 GEFS temperature samples, 217 member-level daily maxima, and 13,077 accepted historical TMAX records from 1991 through available 2026 dates. Each target day has 930 climatology samples (31 calendar days across 30 historical years). The seven independent GHCN rounded daily highs agree with the seven Kalshi-reported settlement highs.
@@ -37,10 +39,11 @@ python3 -m venv .venv
 # Requires network unless data are already cached
 .venv/bin/python collect_nyc.py
 python3 milestone1.py
+python3 climatology.py
 
 # Offline verification
 python3 inspect_nyc.py
-python3 -m unittest -v test_milestone1.py
+python3 -m unittest -v test_milestone1.py test_climatology.py
 ```
 
 `collect_nyc.py` decodes GRIB with ecCodes; the baseline, evaluation, and offline checks otherwise use the Python standard library. The full workflow is reproducible from cached source files. Historical source data can be revised on future downloads.

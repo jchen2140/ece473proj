@@ -19,7 +19,9 @@ class MilestoneChecks(unittest.TestCase):
 
     def test_seasonal_window_wraps_year_and_excludes_future(self):
         self.assertEqual(seasonal_distance(dt.date(1991,12,31),dt.date(2026,1,1)),1)
-        history = [{'date': d} for d in ['1990-07-20','1991-07-05','2020-08-05','2020-07-20','2026-07-20']]
+        history = [{'date': d, 'ghcn_station_id': STATION, 'quality_flag': '',
+                    'tmax_f': 80, 'rounded_tmax_f': 80}
+                   for d in ['1990-07-20','1991-07-05','2020-08-05','2020-07-20','2026-07-20']]
         sample = training_sample(history, dt.date(2026,7,20))
         self.assertEqual([r['date'] for r in sample], ['1991-07-05','2020-07-20'])
 

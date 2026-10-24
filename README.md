@@ -4,6 +4,8 @@ This project pairs settled Kalshi daily-high contracts with archived NOAA GEFS e
 
 For the first two weeks' task-by-task mapping and the complete workflow, see [MILESTONE1_COVERAGE.md](MILESTONE1_COVERAGE.md). Run `python3 milestone1.py` after collection to add historical station temperatures, a seasonal climatology baseline, and Brier/log-loss/calibration evaluation.
 
+The dedicated [week 2 baseline guide](CLIMATOLOGY_BASELINE.md) documents the historical records and model. Run `python3 climatology.py` to produce the 1991–2020 training set, post-training records, coverage checks, and seasonal summaries. For a probability query, use `python3 climatology.py --date 2026-07-20 --lower 79 --upper 80`.
+
 ## Run
 
 ```bash
