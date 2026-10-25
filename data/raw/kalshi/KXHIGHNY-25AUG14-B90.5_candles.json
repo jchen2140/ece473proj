@@ -1,0 +1,55 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1755097200,
+      "open_interest": "1.00",
+      "price": {
+        "close": "0.0900",
+        "high": "0.0900",
+        "low": "0.0900",
+        "mean": "0.0900",
+        "open": "0.0900",
+        "previous": null
+      },
+      "volume": "1.00",
+      "yes_ask": {
+        "close": "0.1100",
+        "high": "0.6300",
+        "low": "0.0700",
+        "open": "0.6300"
+      },
+      "yes_bid": {
+        "close": "0.0600",
+        "high": "0.0900",
+        "low": "0.0000",
+        "open": "0.0000"
+      }
+    },
+    {
+      "end_period_ts": 1755100800,
+      "open_interest": "25.00",
+      "price": {
+        "close": "0.1500",
+        "high": "0.1500",
+        "low": "0.1100",
+        "mean": "0.1346",
+        "open": "0.1300",
+        "previous": "0.0900"
+      },
+      "volume": "24.00",
+      "yes_ask": {
+        "close": "0.1700",
+        "high": "0.1900",
+        "low": "0.1100",
+        "open": "0.1100"
+      },
+      "yes_bid": {
+        "close": "0.1500",
+        "high": "0.1600",
+        "low": "0.0300",
+        "open": "0.0600"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-25AUG14-B90.5"
+}

@@ -1,10 +1,26 @@
 # NYC Central Park weather-market pilot
 
-This project pairs settled Kalshi daily-high contracts with archived NOAA GEFS ensemble forecasts for Central Park. The default sample is **July 20–26, 2026**. It validates the data pipeline; seven days cannot establish forecast skill.
+This project pairs settled Kalshi daily-high contracts with archived NOAA GEFS ensemble forecasts for Central Park. The original pilot sample was **July 20–26, 2026** (seven days, a pipeline check only); the collector now defaults to the one-year window in `config.py`.
 
 For the first two weeks' task-by-task mapping and the complete workflow, see [MILESTONE1_COVERAGE.md](MILESTONE1_COVERAGE.md). Run `python3 milestone1.py` after collection to add historical station temperatures, a seasonal climatology baseline, and Brier/log-loss/calibration evaluation.
 
 The dedicated [week 2 baseline guide](CLIMATOLOGY_BASELINE.md) documents the historical records and model. Run `python3 climatology.py` to produce the 1991–2020 training set, post-training records, coverage checks, and seasonal summaries. For a probability query, use `python3 climatology.py --date 2026-07-20 --lower 79 --upper 80`.
+
+## Full-window run (Milestone 1, week 3)
+
+`config.py` sets the study window (Aug 14, 2025 – Aug 13, 2026, every contract on NWS/Central Park rules) and the date split: train Aug 14, 2025 – Apr 30, 2026, test May 1 – Aug 13, 2026. With no arguments, `collect_nyc.py` now collects that whole window. See [DATA_NOTES.md](DATA_NOTES.md) for what the data forced and the plan changes.
+
+```bash
+.venv/bin/python collect_nyc.py --workers 32   # resumable; finished days are saved in data/days/
+.venv/bin/python milestone1.py                 # climatology for every row; point scores on test days
+.venv/bin/python evaluate.py                   # test-only scores with day-bootstrap CIs -> data/results/
+python3 inspect_nyc.py                         # offline consistency checks
+.venv/bin/python -m unittest test_milestone1.py test_climatology.py test_evaluation.py
+```
+
+- **Skipped days:** a day that fails a strict check (not six settled bins, rules not naming Central Park/NWS, a market from another event, missing or late GEFS files, inconsistent outcome) is written to `data/skipped_days.csv` with a reason instead of stopping the run. Network failures are not cached, so rerunning retries them.
+- **Blank settlement highs:** some 2025 events settled every bin but have an empty `expiration_value`. For those days `kalshi_settlement_high_f` is the GHCN Central Park high, used only if it falls in Kalshi's winning bin; `settlement_high_source` says `ghcn_fallback` instead of `kalshi`.
+- **`evaluate.py`:** scores the raw ensemble, climatology, persistence (the high from two days before plus 1991–2020 two-day changes; yesterday's high is not final at the noon cutoff) and the market midpoint on identical test-day rows. 95% intervals resample whole test days 1,000 times; paired differences (ensemble − climatology, ensemble − market, ensemble − persistence) get their own intervals. Outputs: `data/results/results_table.csv`, `paired_differences.csv`, `results_tables.md`, `scored_rows.csv`, `summary.json`.
 
 ## Run
 
@@ -14,7 +30,7 @@ python3 -m venv .venv
 .venv/bin/python collect_nyc.py
 ```
 
-For a one-day check, append `--days 1`. Downloads are cached and reruns reuse them. `--start YYYY-MM-DD --days N` changes the period, but the collector intentionally rejects contracts whose rules do not explicitly name Central Park and the NWS. No Kalshi login or AWS account is needed.
+For a one-day check, append `--start 2026-07-20 --days 1`. Downloads are cached and reruns reuse them. `--start YYYY-MM-DD --days N` changes the period, but the collector skips (and logs) days with contracts whose rules do not explicitly name Central Park and the NWS. No Kalshi login or AWS account is needed.
 
 Git includes the extracted datasets, Kalshi responses, and NOAA source manifests. Large raw GEFS messages, the downloadable GHCN station/history files, and the virtual environment are ignored. A fresh clone can recreate those caches by running the workflow in `MILESTONE1_COVERAGE.md`.
 

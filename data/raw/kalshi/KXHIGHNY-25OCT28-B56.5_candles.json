@@ -1,0 +1,55 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1761577200,
+      "open_interest": "0.00",
+      "price": {
+        "close": null,
+        "high": null,
+        "low": null,
+        "mean": null,
+        "open": null,
+        "previous": null
+      },
+      "volume": "0.00",
+      "yes_ask": {
+        "close": "0.5800",
+        "high": "0.6000",
+        "low": "0.5800",
+        "open": "0.6000"
+      },
+      "yes_bid": {
+        "close": "0.1600",
+        "high": "0.1600",
+        "low": "0.0000",
+        "open": "0.0000"
+      }
+    },
+    {
+      "end_period_ts": 1761580800,
+      "open_interest": "36.00",
+      "price": {
+        "close": "0.5000",
+        "high": "0.5000",
+        "low": "0.3900",
+        "mean": "0.4878",
+        "open": "0.5000",
+        "previous": null
+      },
+      "volume": "36.00",
+      "yes_ask": {
+        "close": "0.4900",
+        "high": "0.5800",
+        "low": "0.4900",
+        "open": "0.5800"
+      },
+      "yes_bid": {
+        "close": "0.4100",
+        "high": "0.4100",
+        "low": "0.1600",
+        "open": "0.1600"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-25OCT28-B56.5"
+}

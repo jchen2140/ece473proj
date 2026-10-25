@@ -63,3 +63,9 @@ python3 -m unittest -v test_milestone1.py test_climatology.py
 Later work includes expanding the evaluation period and cities, training bias/spread adjustments on a separate period, plotting reliable comparisons, and building the LMSR/trader simulation. Those later tasks are not necessary to claim that the first two weeks' NYC forecast data and probability conversion are implemented. Seven test events validate functionality; they do not validate forecast skill or profitability.
 
 Source plan: the supplied `ECE473 Group 14 Project One-Pager.pdf`, Milestone 1 schedule. NOAA source format: https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt . Actual download URLs and retrieval timestamps are retained alongside raw files.
+
+## Week 3: Yohana's tasks (full window)
+
+| One-pager task | Implementation / evidence |
+| --- | --- |
+| Run ensemble and climatology through the evaluation code (Yohana) | `config.py` fixes the window (Aug 14, 2025 – Aug 13, 2026) and the date split (train through Apr 30, test May 1 – Aug 13). `collect_nyc.py` collected all 365 days (2,190 contracts), skipping and logging bad days instead of stopping. `evaluate.py` scores the raw ensemble, climatology, a persistence baseline and the Kalshi midpoint on identical test-day contracts, with 95% intervals from resampling days and paired differences. Tables: `data/results/results_tables.md` and `.csv`. Data issues and plan changes: [DATA_NOTES.md](DATA_NOTES.md). |

@@ -1,0 +1,494 @@
+{
+  "train_period": [
+    "2025-08-14",
+    "2026-04-30"
+  ],
+  "test_period": [
+    "2026-05-01",
+    "2026-08-13"
+  ],
+  "collected_days": {
+    "train": 260,
+    "test": 105
+  },
+  "test_contracts_total": 630,
+  "test_contracts_shared": 630,
+  "test_contracts_missing_by_model": {
+    "raw_ensemble": 0,
+    "climatology": 0,
+    "persistence": 0,
+    "market": 0
+  },
+  "test_zero_probability_yes_contracts": 12,
+  "headline": {
+    "days": 105,
+    "contracts": 630,
+    "replicates": 1000,
+    "models": {
+      "raw_ensemble": {
+        "brier": {
+          "mean": 0.14497794955651355,
+          "ci_low": 0.13371628429380772,
+          "ci_high": 0.1568547974167121
+        },
+        "log_loss": {
+          "mean": 0.6557849472232227,
+          "ci_low": 0.5370696001901,
+          "ci_high": 0.8023811765206644
+        }
+      },
+      "climatology": {
+        "brier": {
+          "mean": 0.1685088541293883,
+          "ci_low": 0.1532621162736494,
+          "ci_high": 0.1822893625650823
+        },
+        "log_loss": {
+          "mean": 0.5588183876220458,
+          "ci_low": 0.507055874987025,
+          "ci_high": 0.6124613753828196
+        }
+      },
+      "persistence": {
+        "brier": {
+          "mean": 0.18706404447160602,
+          "ci_low": 0.17362152226057878,
+          "ci_high": 0.20011986466918832
+        },
+        "log_loss": {
+          "mean": 0.6193484399013595,
+          "ci_low": 0.5660761481102751,
+          "ci_high": 0.6743303080403099
+        }
+      },
+      "market": {
+        "brier": {
+          "mean": 0.10914984126984129,
+          "ci_low": 0.1009777996031746,
+          "ci_high": 0.11716339583333334
+        },
+        "log_loss": {
+          "mean": 0.3407616246676694,
+          "ci_low": 0.3167969408023743,
+          "ci_high": 0.36429367186560674
+        }
+      }
+    },
+    "pairs": {
+      "raw_ensemble-climatology": {
+        "brier": {
+          "mean": -0.02353090457287474,
+          "ci_low": -0.04075754807877596,
+          "ci_high": -0.004737656339754875,
+          "share_of_replicates_first_better": 0.993
+        },
+        "log_loss": {
+          "mean": 0.09696655960117684,
+          "ci_low": -0.0424429176125703,
+          "ci_high": 0.2584670088611335,
+          "share_of_replicates_first_better": 0.083
+        }
+      },
+      "raw_ensemble-market": {
+        "brier": {
+          "mean": 0.03582810828667227,
+          "ci_low": 0.024982540339097827,
+          "ci_high": 0.047944545565754906,
+          "share_of_replicates_first_better": 0.0
+        },
+        "log_loss": {
+          "mean": 0.31502332255555326,
+          "ci_low": 0.19994313583778067,
+          "ci_high": 0.4560477053799914,
+          "share_of_replicates_first_better": 0.0
+        }
+      },
+      "raw_ensemble-persistence": {
+        "brier": {
+          "mean": -0.042086094915092465,
+          "ci_low": -0.06024374998852974,
+          "ci_high": -0.023783485658494353,
+          "share_of_replicates_first_better": 1.0
+        },
+        "log_loss": {
+          "mean": 0.03643650732186321,
+          "ci_low": -0.10793550056049482,
+          "ci_high": 0.19392694113000106,
+          "share_of_replicates_first_better": 0.329
+        }
+      }
+    }
+  },
+  "supplement_no_market": {
+    "days": 105,
+    "contracts": 630,
+    "replicates": 1000,
+    "models": {
+      "raw_ensemble": {
+        "brier": {
+          "mean": 0.14497794955651355,
+          "ci_low": 0.13371628429380772,
+          "ci_high": 0.1568547974167121
+        },
+        "log_loss": {
+          "mean": 0.6557849472232227,
+          "ci_low": 0.5370696001901,
+          "ci_high": 0.8023811765206644
+        }
+      },
+      "climatology": {
+        "brier": {
+          "mean": 0.1685088541293883,
+          "ci_low": 0.1532621162736494,
+          "ci_high": 0.1822893625650823
+        },
+        "log_loss": {
+          "mean": 0.5588183876220458,
+          "ci_low": 0.507055874987025,
+          "ci_high": 0.6124613753828196
+        }
+      },
+      "persistence": {
+        "brier": {
+          "mean": 0.18706404447160602,
+          "ci_low": 0.17362152226057878,
+          "ci_high": 0.20011986466918832
+        },
+        "log_loss": {
+          "mean": 0.6193484399013595,
+          "ci_low": 0.5660761481102751,
+          "ci_high": 0.6743303080403099
+        }
+      }
+    },
+    "pairs": {
+      "raw_ensemble-climatology": {
+        "brier": {
+          "mean": -0.02353090457287474,
+          "ci_low": -0.04075754807877596,
+          "ci_high": -0.004737656339754875,
+          "share_of_replicates_first_better": 0.993
+        },
+        "log_loss": {
+          "mean": 0.09696655960117684,
+          "ci_low": -0.0424429176125703,
+          "ci_high": 0.2584670088611335,
+          "share_of_replicates_first_better": 0.083
+        }
+      },
+      "raw_ensemble-persistence": {
+        "brier": {
+          "mean": -0.042086094915092465,
+          "ci_low": -0.06024374998852974,
+          "ci_high": -0.023783485658494353,
+          "share_of_replicates_first_better": 1.0
+        },
+        "log_loss": {
+          "mean": 0.03643650732186321,
+          "ci_low": -0.10793550056049482,
+          "ci_high": 0.19392694113000106,
+          "share_of_replicates_first_better": 0.329
+        }
+      }
+    }
+  },
+  "supplement_whole_window": {
+    "days": 363,
+    "contracts": 2178,
+    "replicates": 1000,
+    "models": {
+      "raw_ensemble": {
+        "brier": {
+          "mean": 0.1552455784789528,
+          "ci_low": 0.14708235509957204,
+          "ci_high": 0.16244279900509206
+        },
+        "log_loss": {
+          "mean": 0.8578873473597093,
+          "ci_low": 0.764446312476768,
+          "ci_high": 0.9488328457444064
+        }
+      },
+      "climatology": {
+        "brier": {
+          "mean": 0.19497196537337314,
+          "ci_low": 0.18811595839640005,
+          "ci_high": 0.20105877407601103
+        },
+        "log_loss": {
+          "mean": 0.6424867287581993,
+          "ci_low": 0.6177849643962708,
+          "ci_high": 0.6659794230513495
+        }
+      },
+      "persistence": {
+        "brier": {
+          "mean": 0.20664729623453376,
+          "ci_low": 0.200317078288118,
+          "ci_high": 0.21221045943334657
+        },
+        "log_loss": {
+          "mean": 0.6910694839198612,
+          "ci_low": 0.6648491047697371,
+          "ci_high": 0.7162107803213328
+        }
+      },
+      "market": {
+        "brier": {
+          "mean": 0.11329299816345272,
+          "ci_low": 0.1090282400711662,
+          "ci_high": 0.11712468663911846
+        },
+        "log_loss": {
+          "mean": 0.3551063610697557,
+          "ci_low": 0.3423994843461352,
+          "ci_high": 0.3667005291323244
+        }
+      }
+    },
+    "pairs": {
+      "raw_ensemble-climatology": {
+        "brier": {
+          "mean": -0.039726386894420346,
+          "ci_low": -0.049337750446903944,
+          "ci_high": -0.030246028143398662,
+          "share_of_replicates_first_better": 1.0
+        },
+        "log_loss": {
+          "mean": 0.21540061860150994,
+          "ci_low": 0.11726374139076225,
+          "ci_high": 0.30932243509765556,
+          "share_of_replicates_first_better": 0.0
+        }
+      },
+      "raw_ensemble-market": {
+        "brier": {
+          "mean": 0.041952580315500074,
+          "ci_low": 0.03354281703194562,
+          "ci_high": 0.04905795156655958,
+          "share_of_replicates_first_better": 0.0
+        },
+        "log_loss": {
+          "mean": 0.5027809862899536,
+          "ci_low": 0.41086195206937703,
+          "ci_high": 0.5917464907675593,
+          "share_of_replicates_first_better": 0.0
+        }
+      },
+      "raw_ensemble-persistence": {
+        "brier": {
+          "mean": -0.05140171775558097,
+          "ci_low": -0.06149534981980209,
+          "ci_high": -0.041803835728074355,
+          "share_of_replicates_first_better": 1.0
+        },
+        "log_loss": {
+          "mean": 0.16681786343984806,
+          "ci_low": 0.0654018638414543,
+          "ci_high": 0.2636018662338057,
+          "share_of_replicates_first_better": 0.0
+        }
+      }
+    }
+  },
+  "log_loss_clip_sensitivity": {
+    "0.001": {
+      "days": 105,
+      "contracts": 630,
+      "replicates": 1000,
+      "models": {
+        "raw_ensemble": {
+          "brier": {
+            "mean": 0.14497794955651355,
+            "ci_low": 0.13371628429380772,
+            "ci_high": 0.1568547974167121
+          },
+          "log_loss": {
+            "mean": 0.5244688435832862,
+            "ci_low": 0.4627387476889917,
+            "ci_high": 0.594453541164014
+          }
+        },
+        "climatology": {
+          "brier": {
+            "mean": 0.1685088541293883,
+            "ci_low": 0.1532621162736494,
+            "ci_high": 0.1822893625650823
+          },
+          "log_loss": {
+            "mean": 0.5588326661982327,
+            "ci_low": 0.507065513025951,
+            "ci_high": 0.612480453147114
+          }
+        },
+        "persistence": {
+          "brier": {
+            "mean": 0.18706404447160602,
+            "ci_low": 0.17362152226057878,
+            "ci_high": 0.20011986466918832
+          },
+          "log_loss": {
+            "mean": 0.6193500264098247,
+            "ci_low": 0.5660761481102751,
+            "ci_high": 0.6743318945487753
+          }
+        },
+        "market": {
+          "brier": {
+            "mean": 0.10914984126984129,
+            "ci_low": 0.1009777996031746,
+            "ci_high": 0.11716339583333334
+          },
+          "log_loss": {
+            "mean": 0.3407616246676694,
+            "ci_low": 0.3167969408023743,
+            "ci_high": 0.36429367186560674
+          }
+        }
+      },
+      "pairs": {
+        "raw_ensemble-climatology": {
+          "brier": {
+            "mean": -0.02353090457287474,
+            "ci_low": -0.04075754807877596,
+            "ci_high": -0.004737656339754875,
+            "share_of_replicates_first_better": 0.993
+          },
+          "log_loss": {
+            "mean": -0.034363822614946526,
+            "ci_low": -0.11820636017967046,
+            "ci_high": 0.059988615699005904,
+            "share_of_replicates_first_better": 0.77
+          }
+        },
+        "raw_ensemble-market": {
+          "brier": {
+            "mean": 0.03582810828667227,
+            "ci_low": 0.024982540339097827,
+            "ci_high": 0.047944545565754906,
+            "share_of_replicates_first_better": 0.0
+          },
+          "log_loss": {
+            "mean": 0.18370721891561675,
+            "ci_low": 0.12692430904051077,
+            "ci_high": 0.2520918783250215,
+            "share_of_replicates_first_better": 0.0
+          }
+        },
+        "raw_ensemble-persistence": {
+          "brier": {
+            "mean": -0.042086094915092465,
+            "ci_low": -0.06024374998852974,
+            "ci_high": -0.023783485658494353,
+            "share_of_replicates_first_better": 1.0
+          },
+          "log_loss": {
+            "mean": -0.09488118282653857,
+            "ci_low": -0.1861211313969216,
+            "ci_high": 0.0008876649014093004,
+            "share_of_replicates_first_better": 0.973
+          }
+        }
+      }
+    },
+    "0.01": {
+      "days": 105,
+      "contracts": 630,
+      "replicates": 1000,
+      "models": {
+        "raw_ensemble": {
+          "brier": {
+            "mean": 0.14497794955651355,
+            "ci_low": 0.13371628429380772,
+            "ci_high": 0.1568547974167121
+          },
+          "log_loss": {
+            "mean": 0.48296591010604495,
+            "ci_low": 0.43994551065640136,
+            "ci_high": 0.531884952443498
+          }
+        },
+        "climatology": {
+          "brier": {
+            "mean": 0.1685088541293883,
+            "ci_low": 0.1532621162736494,
+            "ci_high": 0.1822893625650823
+          },
+          "log_loss": {
+            "mean": 0.5555023750163849,
+            "ci_low": 0.5059410750396098,
+            "ci_high": 0.6064487203663854
+          }
+        },
+        "persistence": {
+          "brier": {
+            "mean": 0.18706404447160602,
+            "ci_low": 0.17362152226057878,
+            "ci_high": 0.20011986466918832
+          },
+          "log_loss": {
+            "mean": 0.6154472619669645,
+            "ci_low": 0.5651827400246439,
+            "ci_high": 0.6674211728632127
+          }
+        },
+        "market": {
+          "brier": {
+            "mean": 0.10914984126984129,
+            "ci_low": 0.1009777996031746,
+            "ci_high": 0.11716339583333334
+          },
+          "log_loss": {
+            "mean": 0.3408815721445732,
+            "ci_low": 0.3169488742731191,
+            "ci_high": 0.36445220244758114
+          }
+        }
+      },
+      "pairs": {
+        "raw_ensemble-climatology": {
+          "brier": {
+            "mean": -0.02353090457287474,
+            "ci_low": -0.04075754807877596,
+            "ci_high": -0.004737656339754875,
+            "share_of_replicates_first_better": 0.993
+          },
+          "log_loss": {
+            "mean": -0.07253646491033994,
+            "ci_low": -0.13826919502769727,
+            "ci_high": 0.0007673061451989977,
+            "share_of_replicates_first_better": 0.971
+          }
+        },
+        "raw_ensemble-market": {
+          "brier": {
+            "mean": 0.03582810828667227,
+            "ci_low": 0.024982540339097827,
+            "ci_high": 0.047944545565754906,
+            "share_of_replicates_first_better": 0.0
+          },
+          "log_loss": {
+            "mean": 0.14208433796147174,
+            "ci_low": 0.09903036696566898,
+            "ci_high": 0.19020352479418515,
+            "share_of_replicates_first_better": 0.0
+          }
+        },
+        "raw_ensemble-persistence": {
+          "brier": {
+            "mean": -0.042086094915092465,
+            "ci_low": -0.06024374998852974,
+            "ci_high": -0.023783485658494353,
+            "share_of_replicates_first_better": 1.0
+          },
+          "log_loss": {
+            "mean": -0.13248135186091958,
+            "ci_low": -0.205759090101986,
+            "ci_high": -0.05574553356058269,
+            "share_of_replicates_first_better": 0.999
+          }
+        }
+      }
+    }
+  }
+}

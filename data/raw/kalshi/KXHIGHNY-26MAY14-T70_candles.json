@@ -1,0 +1,55 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1778684400,
+      "open_interest": "174.79",
+      "price": {
+        "close": "0.0400",
+        "high": "0.0800",
+        "low": "0.0300",
+        "mean": "0.0400",
+        "open": "0.0800",
+        "previous": null
+      },
+      "volume": "180.79",
+      "yes_ask": {
+        "close": "0.0500",
+        "high": "1.0000",
+        "low": "0.0400",
+        "open": "1.0000"
+      },
+      "yes_bid": {
+        "close": "0.0400",
+        "high": "0.0600",
+        "low": "0.0100",
+        "open": "0.0100"
+      }
+    },
+    {
+      "end_period_ts": 1778688000,
+      "open_interest": "241.32",
+      "price": {
+        "close": "0.0300",
+        "high": "0.0500",
+        "low": "0.0300",
+        "mean": "0.0395",
+        "open": "0.0400",
+        "previous": "0.0400"
+      },
+      "volume": "66.53",
+      "yes_ask": {
+        "close": "0.0400",
+        "high": "0.0500",
+        "low": "0.0400",
+        "open": "0.0500"
+      },
+      "yes_bid": {
+        "close": "0.0300",
+        "high": "0.0400",
+        "low": "0.0200",
+        "open": "0.0400"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-26MAY14-T70"
+}

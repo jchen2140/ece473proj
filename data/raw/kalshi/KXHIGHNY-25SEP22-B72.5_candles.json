@@ -1,0 +1,55 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1758466800,
+      "open_interest": "0.00",
+      "price": {
+        "close": null,
+        "high": null,
+        "low": null,
+        "mean": null,
+        "open": null,
+        "previous": null
+      },
+      "volume": "0.00",
+      "yes_ask": {
+        "close": "0.2900",
+        "high": "0.5200",
+        "low": "0.2900",
+        "open": "0.4300"
+      },
+      "yes_bid": {
+        "close": "0.2400",
+        "high": "0.2600",
+        "low": "0.0000",
+        "open": "0.0000"
+      }
+    },
+    {
+      "end_period_ts": 1758470400,
+      "open_interest": "0.00",
+      "price": {
+        "close": null,
+        "high": null,
+        "low": null,
+        "mean": null,
+        "open": null,
+        "previous": null
+      },
+      "volume": "0.00",
+      "yes_ask": {
+        "close": "0.2900",
+        "high": "0.2900",
+        "low": "0.2900",
+        "open": "0.2900"
+      },
+      "yes_bid": {
+        "close": "0.2400",
+        "high": "0.2400",
+        "low": "0.2400",
+        "open": "0.2400"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-25SEP22-B72.5"
+}

@@ -1,18 +1,21 @@
 {
-  "days": 7,
-  "contracts": 42,
+  "requested_start": "2025-08-14",
+  "requested_days": 365,
+  "days": 365,
+  "skipped_days": 0,
+  "contracts": 2190,
   "ensemble_members_per_day": 31,
-  "temperature_points": 2170,
-  "missing_market_midpoints": 0,
-  "ensemble_brier_mean_per_binary_contract": 0.14325355532431494,
+  "temperature_points": 113150,
+  "missing_market_midpoints": 12,
+  "ensemble_brier_mean_per_binary_contract": 0.15488527456654236,
   "limitations": [
-    "Seven days is a pipeline validation sample, not evidence of model skill.",
+    "Descriptive all-days score; out-of-sample comparisons are in data/results/.",
     "GEFS 0.25-degree nearest grid point is not a station measurement.",
     "Daily maxima approximate continuous extrema using three-hourly temperatures and interpolated 05Z edges.",
     "Round-half-up is an explicit modeling convention, not a verified model of NWS instrument processing.",
     "Actual high is Kalshi expiration_value; original NWS climate reports have not been independently downloaded.",
-    "Raw ensemble probabilities are uncalibrated. Fit bias/spread on a separate longer training period.",
+    "Raw ensemble probabilities have no bias or spread correction.",
     "S3 Last-Modified checks support availability timing; they do not prove exact historical dissemination latency."
   ],
-  "market_brier_mean_per_binary_contract": 0.12042559523809526
+  "market_brier_mean_per_binary_contract": 0.11329299816345297
 }

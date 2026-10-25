@@ -6,6 +6,7 @@ import json
 import math
 from collections import defaultdict
 
+import config
 from collect_nyc import DATA, fetch, hits, write_csv
 from climatology import SeasonalClimatology, seasonal_distance
 
@@ -122,15 +123,20 @@ def main():
         observed = history_by_date.get(date)
         high = float(rows[0]['kalshi_settlement_high_f'])
         observation_checks.append({'target_date': date, 'kalshi_settlement_high_f': high,
+                                   'settlement_high_source': rows[0].get('settlement_high_source', 'kalshi'),
                                    'ghcn_tmax_f': observed['tmax_f'] if observed else None,
                                    'ghcn_rounded_tmax_f': observed['rounded_tmax_f'] if observed else None,
                                    'rounded_values_agree': observed['rounded_tmax_f'] == high if observed else None,
-                                   'note': 'GHCN is an independent archive cross-check; original settlement CLI release not retrieved.'})
+                                   'note': 'GHCN is an independent archive cross-check; original settlement CLI release not retrieved. '
+                                           'Rows with source ghcn_fallback agree by construction.'})
     write_csv('matched_with_climatology.csv', enriched)
     write_csv('climatology_training_summary.csv', baseline_info)
     write_csv('observation_crosscheck.csv', observation_checks)
-    # Score all three forecasts on exactly the same rows.
-    shared = [r for r in enriched if r['market_midpoint'] != '']
+    # Score all three forecasts on exactly the same rows: test days with a market quote.
+    # Bootstrap intervals and paired differences are in evaluate.py.
+    shared = [r for r in enriched if r['market_midpoint'] != '' and config.split_of(r['target_date']) == 'test']
+    if not shared:
+        raise SystemExit('No test-period rows; collect the config.TEST_START..TEST_END window first')
     outcomes = [int(r['outcome']) for r in shared]
     metrics, calibration = {}, []
     for model, column in [('ensemble', 'ensemble_probability'), ('climatology', 'climatology_probability'), ('market', 'market_midpoint')]:
@@ -144,15 +150,18 @@ def main():
                                 'mean_predicted_probability': sum(ps[j] for j in indexes)/len(indexes) if indexes else None,
                                 'observed_yes_frequency': sum(outcomes[j] for j in indexes)/len(indexes) if indexes else None})
     write_csv('calibration.csv', calibration)
-    report = {'evaluation_dates': sorted(groups), 'shared_contracts': len(shared),
-              'excluded_missing_market_quotes': len(enriched)-len(shared),
+    test_rows = [r for r in enriched if config.split_of(r['target_date']) == 'test']
+    report = {'evaluation_dates': sorted({r['target_date'] for r in shared}),
+              'test_period': [config.TEST_START.isoformat(), config.TEST_END.isoformat()],
+              'shared_contracts': len(shared),
+              'excluded_missing_market_quotes': len(test_rows)-len(shared),
               'climatology': {'station': station, 'training_years': [1991, 2020], 'calendar_window': '+/-15 days',
                               'accepted_history_rows_1991_onward': len(history), 'rejected_missing_or_quality_flagged_all_years': rejected},
               'metrics': metrics,
-              'cautions': ['Seven events is a smoke test, not a reliable ranking of models.',
+              'cautions': ['Point estimates only; see data/results/ for day-level bootstrap intervals.',
                            'Six contracts in each event are dependent; confidence intervals must resample events/days.',
                            'Retrospectively revised GHCN records are used for historical climatology; this is not a vintage-locked archive.',
-                           'Probabilities are uncalibrated; no bias/spread fit or market-making simulation is included.',
+                           'Raw ensemble only; no bias or spread correction is applied.',
                            'GHCN is not a replacement for the exact NWS report used in settlement.']}
     (DATA/'evaluation.json').write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))

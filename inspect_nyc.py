@@ -5,6 +5,8 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
+import config
+
 DATA = Path(__file__).resolve().parent / 'data'
 
 
@@ -55,8 +57,24 @@ def main():
     assert report['contracts'] == len(matched)
     assert report['days'] == len(groups)
     assert report['temperature_points'] == len(points)
+    # Collected and skipped days together account for every requested day, with no overlap.
+    skipped = load('skipped_days.csv') if (DATA/'skipped_days.csv').exists() else []
+    skipped_days = {r['target_date'] for r in skipped}
+    assert not skipped_days & set(groups)
+    first = dt.date.fromisoformat(report['requested_start'])
+    requested = {(first + dt.timedelta(days=i)).isoformat() for i in range(report['requested_days'])}
+    assert set(groups) | skipped_days == requested
+    assert all(len({r['market_ticker'] for r in rows}) == 6 for rows in groups.values())
+    in_window = [d for d in groups if config.WINDOW_START <= dt.date.fromisoformat(d) <= config.WINDOW_END]
+    splits = defaultdict(int)
+    for d in groups:
+        splits[config.split_of(d)] += 1
     print(f'PASS: {len(groups)} days; {len(matched)} contracts; {len(maxima)} member maxima; {len(points)} forecast points.')
-    for row in summaries:
+    print(f'{len(skipped)} skipped days; {len(in_window)} collected days inside the config window; '
+          f'train {splits["train"]}, test {splits["test"]}, outside {splits[None]}.')
+    for row in skipped:
+        print('SKIPPED', row['target_date'], row['reason'], row['detail'])
+    for row in summaries if len(summaries) <= 6 else summaries[:3] + ['...'] + summaries[-3:]:
         print(row)
 
 
