@@ -1,0 +1,55 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1776524400,
+      "open_interest": "915.86",
+      "price": {
+        "close": "0.4400",
+        "high": "0.5000",
+        "low": "0.4000",
+        "mean": "0.4616",
+        "open": "0.5000",
+        "previous": null
+      },
+      "volume": "915.86",
+      "yes_ask": {
+        "close": "0.4400",
+        "high": "1.0000",
+        "low": "0.4100",
+        "open": "1.0000"
+      },
+      "yes_bid": {
+        "close": "0.4100",
+        "high": "0.4900",
+        "low": "0.0100",
+        "open": "0.0100"
+      }
+    },
+    {
+      "end_period_ts": 1776528000,
+      "open_interest": "933.91",
+      "price": {
+        "close": "0.4800",
+        "high": "0.4900",
+        "low": "0.4300",
+        "mean": "0.4465",
+        "open": "0.4300",
+        "previous": "0.4400"
+      },
+      "volume": "112.05",
+      "yes_ask": {
+        "close": "0.4800",
+        "high": "0.4900",
+        "low": "0.4200",
+        "open": "0.4400"
+      },
+      "yes_bid": {
+        "close": "0.4300",
+        "high": "0.4600",
+        "low": "0.4000",
+        "open": "0.4100"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-26APR19-T54"
+}

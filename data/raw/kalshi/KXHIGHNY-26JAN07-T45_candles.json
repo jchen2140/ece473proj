@@ -1,0 +1,55 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1767715200,
+      "open_interest": "53.00",
+      "price": {
+        "close": "0.1400",
+        "high": "0.4000",
+        "low": "0.1400",
+        "mean": "0.1826",
+        "open": "0.4000",
+        "previous": null
+      },
+      "volume": "73.00",
+      "yes_ask": {
+        "close": "0.1600",
+        "high": "1.0000",
+        "low": "0.1200",
+        "open": "1.0000"
+      },
+      "yes_bid": {
+        "close": "0.0100",
+        "high": "0.1500",
+        "low": "0.0100",
+        "open": "0.0100"
+      }
+    },
+    {
+      "end_period_ts": 1767718800,
+      "open_interest": "67.00",
+      "price": {
+        "close": "0.0100",
+        "high": "0.0200",
+        "low": "0.0100",
+        "mean": "0.0136",
+        "open": "0.0200",
+        "previous": "0.1400"
+      },
+      "volume": "14.00",
+      "yes_ask": {
+        "close": "0.0400",
+        "high": "0.1600",
+        "low": "0.0400",
+        "open": "0.1600"
+      },
+      "yes_bid": {
+        "close": "0.0100",
+        "high": "0.0400",
+        "low": "0.0100",
+        "open": "0.0100"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-26JAN07-T45"
+}

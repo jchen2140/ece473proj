@@ -3,6 +3,7 @@ import argparse
 import csv
 import datetime as dt
 import email.utils
+import http.client
 import json
 import math
 import time
@@ -13,6 +14,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import config
+
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / 'data'
 UTC = dt.timezone.utc
@@ -20,6 +23,26 @@ EST = dt.timezone(dt.timedelta(hours=-5))  # NWS climate day: fixed standard tim
 NY = ZoneInfo('America/New_York')
 API = 'https://external-api.kalshi.com/trade-api/v2'
 S3 = 'https://noaa-gefs-pds.s3.amazonaws.com'
+MEMBERS = ['gec00'] + [f'gep{i:02d}' for i in range(1, 31)]
+DAY_CACHE_VERSION = 2
+_GHCN_HIGHS = None
+
+
+def ghcn_rounded_high(day):
+    """Quality-screened Central Park GHCN high (rounded half up), or None if not on file."""
+    global _GHCN_HIGHS
+    if _GHCN_HIGHS is None:
+        path = DATA / 'historical_tmax.csv'
+        with path.open(newline='') as f:
+            _GHCN_HIGHS = {r['date']: int(r['rounded_tmax_f']) for r in csv.DictReader(f)} if path.exists() else {}
+    return _GHCN_HIGHS.get(day.isoformat())
+
+
+class SkipDay(Exception):
+    """A day that fails a strict per-day check; it is logged and left out, not fatal."""
+    def __init__(self, reason, detail):
+        super().__init__(f'{reason}: {detail}')
+        self.reason, self.detail = reason, detail
 
 
 def fetch(url, headers=None):
@@ -28,7 +51,7 @@ def fetch(url, headers=None):
             req = urllib.request.Request(url, headers={'User-Agent': 'ECE473-NYC-research/1.0', **(headers or {})})
             with urllib.request.urlopen(req, timeout=60) as response:
                 return response.read(), dict(response.headers), response.status
-        except (urllib.error.URLError, TimeoutError) as exc:
+        except (OSError, http.client.HTTPException) as exc:  # URLError, socket.timeout, resets
             if isinstance(exc, urllib.error.HTTPError) and exc.code not in (429, 500, 502, 503, 504):
                 raise
             if attempt == 4:
@@ -75,7 +98,7 @@ def get_markets(day):
             payload = cached_json(f'kalshi/{event}_{route.replace("/", "_")}_{page}.json', API + '/' + route + '?' + urllib.parse.urlencode(params))
             for market in payload['markets']:
                 if market['event_ticker'] != event:
-                    raise ValueError('Unexpected event returned')
+                    raise SkipDay('unexpected_event', f'{route} returned {market["event_ticker"]} for {event}')
                 if market.get('result') in ('yes', 'no'):
                     markets[market['ticker']] = (market, route.startswith('historical'))
             cursor = payload.get('cursor', '')
@@ -83,11 +106,11 @@ def get_markets(day):
                 break
             page += 1
     if len(markets) != 6:
-        raise ValueError(f'{event}: expected six complete bins, got {len(markets)}')
+        raise SkipDay('wrong_bin_count', f'{event}: expected six settled bins, got {len(markets)}')
     for market, _ in markets.values():
         rules = market['rules_primary']
         if 'Central Park' not in rules or 'National Weather Service' not in rules:
-            raise ValueError(f'{event}: rules are outside this NWS Central Park pilot; inspect manually')
+            raise SkipDay('non_nws_rules', f'{event}: rules do not name Central Park and the NWS')
     return list(markets.values())
 
 
@@ -141,7 +164,7 @@ def gefs_point(task):
     metadata = json.loads(metadata_path.read_text())
     modified = email.utils.parsedate_to_datetime(metadata['last_modified'])
     if modified > cutoff:
-        raise ValueError(f'Archive timestamp later than prediction cutoff: {url}')
+        raise SkipDay('gefs_after_cutoff', f'Archive timestamp later than prediction cutoff: {url}')
     handle = codes_new_from_message(cache.read_bytes())
     try:
         if codes_get(handle, 'shortName') != '2t' or codes_get(handle, 'forecastTime') != lead:
@@ -170,82 +193,154 @@ def hits(market, value):
     raise ValueError(f'Unsupported strike type {kind}')
 
 
+def collect_day(day, latitude, longitude, workers):
+    """Build all rows for one target date, or raise SkipDay. Strict checks are unchanged."""
+    previous = day - dt.timedelta(days=1)
+    cutoff = dt.datetime.combine(previous, dt.time(12), NY).astimezone(UTC)
+    pairs = get_markets(day)
+    contracts, maxima, matched = [], [], []
+    for market, historical in pairs:
+        bid, ask, midpoint, candle_time = candle_at(market, historical, cutoff)
+        contracts.append({'target_date': day.isoformat(), 'market_ticker': market['ticker'],
+                          'event_ticker': market['event_ticker'], 'bin_label': market['yes_sub_title'],
+                          'strike_type': market['strike_type'], 'lower_bound': market.get('floor_strike'),
+                          'upper_bound': market.get('cap_strike'), 'outcome': int(market['result'] == 'yes'),
+                          'kalshi_settlement_high_f': market['expiration_value'],
+                          'prediction_time_utc': cutoff.isoformat(), 'market_bid': bid, 'market_ask': ask,
+                          'market_midpoint': midpoint, 'market_candle_end_utc': candle_time,
+                          'rules_primary': market['rules_primary']})
+    # Kalshi left expiration_value blank on some 2025 events while still settling every bin.
+    # Then use the GHCN Central Park high, accepted only if it lands in Kalshi's winning bin.
+    # Some events leave the field blank on only some bins; the reported bins must agree.
+    values = {market.get('expiration_value') for market, _ in pairs} - {None, ''}
+    if not values:
+        fallback = ghcn_rounded_high(day)
+        if fallback is None:
+            raise SkipDay('missing_settlement_high', f'{day}: Kalshi expiration_value is empty and no GHCN high')
+        winners = [market for market, _ in pairs if market['result'] == 'yes']
+        if len(winners) != 1 or not hits(winners[0], fallback):
+            raise SkipDay('ghcn_fallback_inconsistent', f'{day}: GHCN high {fallback} outside Kalshi winning bin')
+        pairs = [({**market, 'expiration_value': f'{fallback:.2f}'}, historical) for market, historical in pairs]
+        source = 'ghcn_fallback'
+    elif len(values) != 1:
+        raise SkipDay('inconsistent_settlement_high', f'{day}: bins report different expiration_values {sorted(values)}')
+    else:
+        reported = values.pop()
+        pairs = [({**market, 'expiration_value': reported}, historical) for market, historical in pairs]
+        source = 'kalshi'
+    for c in contracts:
+        c['kalshi_settlement_high_f'] = pairs[0][0]['expiration_value']
+        c['settlement_high_source'] = source
+    if sum(c['outcome'] for c in contracts) != 1:
+        raise SkipDay('outcome_count', f'{day}: expected exactly one YES bin')
+    # 03Z before day start through 06Z after day end: permits interpolation at 05Z boundaries.
+    tasks = [(day, m, lead, latitude, longitude, cutoff) for m in MEMBERS for lead in range(21, 49, 3)]
+    try:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            points = list(pool.map(gefs_point, tasks))
+    except urllib.error.HTTPError as exc:
+        raise SkipDay('gefs_missing', f'{day}: HTTP {exc.code} {exc.url}') from exc
+    except ValueError as exc:
+        raise SkipDay('gefs_invalid', f'{day}: {exc}') from exc
+    for member in MEMBERS:
+        series = sorted([p for p in points if p['member'] == member], key=lambda p: p['forecast_hour'])
+        values = [p['temperature_f'] for p in series]
+        # NWS day is 05Z..05Z. Interpolated edges plus eight internal 3-hourly samples.
+        samples = [values[0]/3 + values[1]*2/3] + values[1:-1] + [values[-2]/3 + values[-1]*2/3]
+        high = max(samples)
+        maxima.append({'target_date': day.isoformat(), 'member': member,
+                       'model_run_utc': series[0]['model_run_utc'], 'daily_high_approx_f': high,
+                       'rounded_high_f': math.floor(high + 0.5),
+                       'day_start_utc': dt.datetime.combine(day, dt.time(), EST).astimezone(UTC).isoformat(),
+                       'day_end_utc': dt.datetime.combine(day+dt.timedelta(days=1), dt.time(), EST).astimezone(UTC).isoformat()})
+    assert len(maxima) == 31
+    for market, _ in pairs:
+        base = next(c for c in contracts if c['market_ticker'] == market['ticker'])
+        count = sum(hits(market, m['rounded_high_f']) for m in maxima)
+        if hits(market, float(market['expiration_value'])) != bool(base['outcome']):
+            raise SkipDay('outcome_inconsistent', f'{market["ticker"]}: outcome inconsistent with reported settlement high')
+        matched.append({**base, 'station_id': 'KNYC', 'latitude': latitude, 'longitude': longitude,
+                        'model_run_utc': maxima[0]['model_run_utc'], 'member_count': 31,
+                        'members_in_bin': count, 'ensemble_probability': count/31,
+                        'probability_method': 'uncalibrated_rounded_3hourly_max_with_interpolated_edges'})
+    if sum(r['members_in_bin'] for r in matched) != 31:
+        raise SkipDay('bins_not_partition', f'{day}: contract bins do not partition ensemble members')
+    return {'version': DAY_CACHE_VERSION, 'contracts': contracts, 'points': points,
+            'maxima': maxima, 'matched': matched}
+
+
+def load_or_collect_day(day, latitude, longitude, workers):
+    """Each finished day is saved on its own, so an interrupted run resumes at the next day."""
+    path = DATA / 'days' / f'{day.isoformat()}.json'
+    if path.exists():
+        cached = json.loads(path.read_text())
+        if cached.get('version') == DAY_CACHE_VERSION:
+            return cached
+    result = collect_day(day, latitude, longitude, workers)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(result))
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--start', default='2026-07-20')
-    parser.add_argument('--days', type=int, default=7)
+    parser.add_argument('--start', default=config.WINDOW_START.isoformat())
+    parser.add_argument('--days', type=int, default=config.window_days())
     parser.add_argument('--workers', type=int, default=6)
     args = parser.parse_args()
     first = dt.date.fromisoformat(args.start)
     station = cached_json('station_KNYC.json', 'https://api.weather.gov/stations/KNYC')
     longitude, latitude = station['geometry']['coordinates']
-    member_ids = ['gec00'] + [f'gep{i:02d}' for i in range(1, 31)]
-    contracts, points, maxima, matched = [], [], [], []
+    contracts, points, maxima, matched, skipped = [], [], [], [], []
+    started = time.monotonic()
     for offset in range(args.days):
         day = first + dt.timedelta(days=offset)
-        previous = day - dt.timedelta(days=1)
-        cutoff = dt.datetime.combine(previous, dt.time(12), NY).astimezone(UTC)
-        pairs = get_markets(day)
-        for market, historical in pairs:
-            bid, ask, midpoint, candle_time = candle_at(market, historical, cutoff)
-            contracts.append({'target_date': day.isoformat(), 'market_ticker': market['ticker'],
-                              'event_ticker': market['event_ticker'], 'bin_label': market['yes_sub_title'],
-                              'strike_type': market['strike_type'], 'lower_bound': market.get('floor_strike'),
-                              'upper_bound': market.get('cap_strike'), 'outcome': int(market['result'] == 'yes'),
-                              'kalshi_settlement_high_f': market['expiration_value'],
-                              'prediction_time_utc': cutoff.isoformat(), 'market_bid': bid, 'market_ask': ask,
-                              'market_midpoint': midpoint, 'market_candle_end_utc': candle_time,
-                              'rules_primary': market['rules_primary']})
-        print(f'{day}: {len(pairs)} contracts; downloading 31 GEFS members', flush=True)
-        # 03Z before day start through 06Z after day end: permits interpolation at 05Z boundaries.
-        tasks = [(day, m, lead, latitude, longitude, cutoff) for m in member_ids for lead in range(21, 49, 3)]
-        with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            daily = list(pool.map(gefs_point, tasks))
-        points.extend(daily)
-        for member in member_ids:
-            series = sorted([p for p in daily if p['member'] == member], key=lambda p: p['forecast_hour'])
-            values = [p['temperature_f'] for p in series]
-            # NWS day is 05Z..05Z. Interpolated edges plus eight internal 3-hourly samples.
-            samples = [values[0]/3 + values[1]*2/3] + values[1:-1] + [values[-2]/3 + values[-1]*2/3]
-            high = max(samples)
-            maxima.append({'target_date': day.isoformat(), 'member': member,
-                           'model_run_utc': series[0]['model_run_utc'], 'daily_high_approx_f': high,
-                           'rounded_high_f': math.floor(high + 0.5),
-                           'day_start_utc': dt.datetime.combine(day, dt.time(), EST).astimezone(UTC).isoformat(),
-                           'day_end_utc': dt.datetime.combine(day+dt.timedelta(days=1), dt.time(), EST).astimezone(UTC).isoformat()})
-        daily_max = [m for m in maxima if m['target_date'] == day.isoformat()]
-        assert len(daily_max) == 31
-        for market, _ in pairs:
-            base = next(c for c in contracts if c['market_ticker'] == market['ticker'])
-            count = sum(hits(market, m['rounded_high_f']) for m in daily_max)
-            if hits(market, float(market['expiration_value'])) != bool(base['outcome']):
-                raise ValueError('Outcome inconsistent with reported settlement high')
-            matched.append({**base, 'station_id': 'KNYC', 'latitude': latitude, 'longitude': longitude,
-                            'model_run_utc': daily_max[0]['model_run_utc'], 'member_count': 31,
-                            'members_in_bin': count, 'ensemble_probability': count/31,
-                            'probability_method': 'uncalibrated_rounded_3hourly_max_with_interpolated_edges'})
-        if sum(r['members_in_bin'] for r in matched if r['target_date'] == day.isoformat()) != 31:
-            raise ValueError('Contract bins do not partition ensemble members')
-        write_csv('markets.csv', contracts)
-        write_csv('ensemble_temperatures.csv', points)
-        write_csv('ensemble_daily_maxima.csv', maxima)
-        write_csv('matched.csv', matched)
-        print(f'{day}: saved complete match', flush=True)
-    report = {'days': args.days, 'contracts': len(matched), 'ensemble_members_per_day': 31,
+        try:
+            result = load_or_collect_day(day, latitude, longitude, args.workers)
+        except SkipDay as exc:
+            skipped.append({'target_date': day.isoformat(), 'event_ticker': event_name(day),
+                            'reason': exc.reason, 'detail': exc.detail})
+            print(f'{day}: SKIPPED ({exc.reason}) {exc.detail}', flush=True)
+            continue
+        except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as exc:
+            # Network failures are not cached, so a rerun retries these days.
+            skipped.append({'target_date': day.isoformat(), 'event_ticker': event_name(day),
+                            'reason': 'network_error', 'detail': f'{type(exc).__name__}: {exc}'})
+            print(f'{day}: SKIPPED (network_error) {exc}', flush=True)
+            continue
+        contracts += result['contracts']
+        points += result['points']
+        maxima += result['maxima']
+        matched += result['matched']
+        print(f'{day}: {len(result["matched"])} contracts saved ({time.monotonic()-started:.0f}s elapsed)', flush=True)
+    if not matched:
+        raise SystemExit('No days collected')
+    write_csv('markets.csv', contracts)
+    write_csv('ensemble_temperatures.csv', points)
+    write_csv('ensemble_daily_maxima.csv', maxima)
+    write_csv('matched.csv', matched)
+    with (DATA/'skipped_days.csv').open('w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=['target_date', 'event_ticker', 'reason', 'detail'], lineterminator='\n')
+        writer.writeheader()
+        writer.writerows(skipped)
+    days = len({r['target_date'] for r in matched})
+    report = {'requested_start': first.isoformat(), 'requested_days': args.days,
+              'days': days, 'skipped_days': len(skipped), 'contracts': len(matched), 'ensemble_members_per_day': 31,
               'temperature_points': len(points), 'missing_market_midpoints': sum(r['market_midpoint'] is None for r in matched),
               'ensemble_brier_mean_per_binary_contract': sum((r['ensemble_probability']-r['outcome'])**2 for r in matched)/len(matched),
-              'limitations': ['Seven days is a pipeline validation sample, not evidence of model skill.',
+              'limitations': ['Descriptive all-days score; out-of-sample comparisons are in data/results/.',
                              'GEFS 0.25-degree nearest grid point is not a station measurement.',
                              'Daily maxima approximate continuous extrema using three-hourly temperatures and interpolated 05Z edges.',
                              'Round-half-up is an explicit modeling convention, not a verified model of NWS instrument processing.',
                              'Actual high is Kalshi expiration_value; original NWS climate reports have not been independently downloaded.',
-                             'Raw ensemble probabilities are uncalibrated. Fit bias/spread on a separate longer training period.',
+                             'Raw ensemble probabilities have no bias or spread correction.',
                              'S3 Last-Modified checks support availability timing; they do not prove exact historical dissemination latency.']}
     complete = [r for r in matched if r['market_midpoint'] is not None]
     if complete:
         report['market_brier_mean_per_binary_contract'] = sum((r['market_midpoint']-r['outcome'])**2 for r in complete)/len(complete)
     (DATA/'validation.json').write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))
+    print(f'Finished in {time.monotonic()-started:.0f}s; {days} days collected, {len(skipped)} skipped.')
 
 
 if __name__ == '__main__':

@@ -3,3 +3,4 @@ __pycache__/
 data/raw/gefs/
 data/raw/ghcn/*.dly
 data/raw/ghcn/ghcnd-stations.txt
+data/days/

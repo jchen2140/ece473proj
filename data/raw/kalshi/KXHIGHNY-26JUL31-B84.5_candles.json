@@ -1,0 +1,30 @@
+{
+  "candlesticks": [
+    {
+      "end_period_ts": 1785427200,
+      "open_interest": "20.00",
+      "price": {
+        "close": "0.3300",
+        "high": "0.3500",
+        "low": "0.2600",
+        "mean": "0.3045",
+        "open": "0.3500",
+        "previous": null
+      },
+      "volume": "20.00",
+      "yes_ask": {
+        "close": "0.3400",
+        "high": "0.8800",
+        "low": "0.2900",
+        "open": "0.8800"
+      },
+      "yes_bid": {
+        "close": "0.3300",
+        "high": "0.3500",
+        "low": "0.0000",
+        "open": "0.0000"
+      }
+    }
+  ],
+  "ticker": "KXHIGHNY-26JUL31-B84.5"
+}
