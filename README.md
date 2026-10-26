@@ -14,13 +14,15 @@ The dedicated [week 2 baseline guide](CLIMATOLOGY_BASELINE.md) documents the his
 .venv/bin/python collect_nyc.py --workers 32   # resumable; finished days are saved in data/days/
 .venv/bin/python milestone1.py                 # climatology for every row; point scores on test days
 .venv/bin/python evaluate.py                   # test-only scores with day-bootstrap CIs -> data/results/
+.venv/bin/python plot_results.py               # train vs test tables + predicted-vs-actual figures
 python3 inspect_nyc.py                         # offline consistency checks
-.venv/bin/python -m unittest test_milestone1.py test_climatology.py test_evaluation.py
+.venv/bin/python -m unittest test_milestone1.py test_climatology.py test_evaluation.py test_plot_results.py
 ```
 
 - **Skipped days:** a day that fails a strict check (not six settled bins, rules not naming Central Park/NWS, a market from another event, missing or late GEFS files, inconsistent outcome) is written to `data/skipped_days.csv` with a reason instead of stopping the run. Network failures are not cached, so rerunning retries them.
 - **Blank settlement highs:** some 2025 events settled every bin but have an empty `expiration_value`. For those days `kalshi_settlement_high_f` is the GHCN Central Park high, used only if it falls in Kalshi's winning bin; `settlement_high_source` says `ghcn_fallback` instead of `kalshi`.
 - **`evaluate.py`:** scores the raw ensemble, climatology, persistence (the high from two days before plus 1991–2020 two-day changes; yesterday's high is not final at the noon cutoff) and the market midpoint on identical test-day rows. 95% intervals resample whole test days 1,000 times; paired differences (ensemble − climatology, ensemble − market, ensemble − persistence) get their own intervals. Outputs: `data/results/results_table.csv`, `paired_differences.csv`, `results_tables.md`, `scored_rows.csv`, `summary.json`.
+- **`plot_results.py`:** reads those scored rows (does not recollect data). Compares train vs test and month-by-month Brier, and plots predicted probabilities against actual YES/NO. Outputs: `data/results/date_comparison.md`, `train_vs_test.csv`, `daily_scores.csv`, `monthly_scores.csv`, `reliability_by_split.csv`, and PNGs in `data/results/figures/`.
 
 ## Run
 
