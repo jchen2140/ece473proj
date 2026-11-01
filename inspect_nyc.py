@@ -11,7 +11,7 @@ DATA = Path(__file__).resolve().parent / 'data'
 
 
 def load(name):
-    with (DATA / name).open(newline='') as f:
+    with (DATA / name).open(newline='', encoding='utf-8') as f:
         return list(csv.DictReader(f))
 
 
@@ -49,7 +49,7 @@ def main():
                           'ensemble_max_high_approx_f': round(max(highs), 2),
                           'winning_bin': next(r['bin_label'] for r in rows if r['outcome']=='1'),
                           'market_midpoints_available': sum(bool(r['market_midpoint']) for r in rows)})
-    with (DATA/'daily_summary.csv').open('w', newline='') as f:
+    with (DATA/'daily_summary.csv').open('w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=list(summaries[0]), lineterminator='\n')
         writer.writeheader()
         writer.writerows(summaries)

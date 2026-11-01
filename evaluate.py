@@ -9,6 +9,7 @@ import csv
 import datetime as dt
 import json
 import math
+import sys
 from collections import defaultdict
 
 import numpy as np
@@ -32,7 +33,7 @@ PAIRS = [('raw_ensemble', 'climatology'), ('raw_ensemble', 'market'), ('raw_ense
 
 
 def read_csv(path):
-    with path.open(newline='') as f:
+    with path.open(newline='', encoding='utf-8') as f:
         return list(csv.DictReader(f))
 
 
@@ -131,6 +132,7 @@ def markdown(result, title, note):
 
 
 def main():
+    sys.stdout.reconfigure(encoding='utf-8')  # Tables contain non-ASCII; Windows consoles default to cp1252.
     rows = read_csv(DATA / 'matched_with_climatology.csv')
     persistence = Persistence(load_history())
     for r in rows:
@@ -191,7 +193,7 @@ def main():
                    'The ensemble is uncorrected, climatology uses 1991–2020 and persistence uses 1991–2020 changes, so none '
                    'of these is fit on 2025–26 data and every day is out of sample for them. Kept separate from the '
                    'main table because the train days will be used for fitting later.')]
-    (RESULTS / 'results_tables.md').write_text('\n'.join(md))
+    (RESULTS / 'results_tables.md').write_text('\n'.join(md), encoding='utf-8')
 
     summary = {'train_period': [config.TRAIN_START.isoformat(), config.TRAIN_END.isoformat()],
                'test_period': [config.TEST_START.isoformat(), config.TEST_END.isoformat()],
@@ -203,7 +205,7 @@ def main():
                'headline': headline, 'supplement_no_market': no_market, 'supplement_whole_window': window,
                'log_loss_clip_sensitivity': {str(eps): r for eps, r in clip.items()}}
     (RESULTS / 'summary.json').write_text(json.dumps(summary, indent=2))
-    print((RESULTS / 'results_tables.md').read_text())
+    print((RESULTS / 'results_tables.md').read_text(encoding='utf-8'))
     print(json.dumps({k: summary[k] for k in ('collected_days', 'test_contracts_total', 'test_contracts_shared',
                                               'test_contracts_missing_by_model')}, indent=2))
 

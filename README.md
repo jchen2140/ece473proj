@@ -24,6 +24,25 @@ python3 inspect_nyc.py                         # offline consistency checks
 - **`evaluate.py`:** scores the raw ensemble, climatology, persistence (the high from two days before plus 1991–2020 two-day changes; yesterday's high is not final at the noon cutoff) and the market midpoint on identical test-day rows. 95% intervals resample whole test days 1,000 times; paired differences (ensemble − climatology, ensemble − market, ensemble − persistence) get their own intervals. Outputs: `data/results/results_table.csv`, `paired_differences.csv`, `results_tables.md`, `scored_rows.csv`, `summary.json`.
 - **`plot_results.py`:** reads those scored rows (does not recollect data). Compares train vs test and month-by-month Brier, and plots predicted probabilities against actual YES/NO. Outputs: `data/results/date_comparison.md`, `train_vs_test.csv`, `daily_scores.csv`, `monthly_scores.csv`, `reliability_by_split.csv`, and PNGs in `data/results/figures/`.
 
+## Market-making backtest (Milestone 2)
+
+Kalshi is the market benchmark throughout; Polymarket is not used because its NYC contracts settle on LaGuardia, not Central Park. Run after the steps above:
+
+```bash
+.venv/bin/python collect_trades.py --workers 2  # resumable; all taker trades and hourly candles -> data/flow/
+.venv/bin/python calibrate.py                   # picks the NOAA correction on train days -> data/noaa_calibrated.csv
+.venv/bin/python calibrate_traders.py           # fits trader settings on train days -> data/trader_calibration.json
+.venv/bin/python compare_forecasts.py           # NOAA vs Kalshi, disagreement tests -> data/results/forecast_comparison/
+.venv/bin/python backtest.py                    # LMSR replay, b analysis, synthetic traders -> data/results/backtest/
+.venv/bin/python plot_backtest.py               # figures -> data/results/backtest/figures/
+.venv/bin/python -m unittest test_lmsr.py test_backtest.py
+```
+
+- **`calibrate.py`:** a rolling Gaussian correction of GEFS, fit on verified days through D-2. A fixed correction fails because the ensemble's bias changes sign by season.
+- **`backtest.py`:** each real taker trade after the noon cutoff becomes a limit order at the price that trader paid, and fills against the LMSR only while the LMSR is at least as good. Quoting halts at noon on the target day; quoting to close is a sensitivity run. b and the fee are selected on train days only. Results are a counterfactual estimate, not realized PnL.
+- **`traders.py`:** a what-if population of noise and informed traders. Informed beliefs center on the later Kalshi midpoint, and the informed share is swept because the data cannot identify it.
+- `data/raw/kalshi_flow/` (about 800 MB) is gitignored; `data/flow/` holds the compressed tables.
+
 ## Run
 
 ```bash

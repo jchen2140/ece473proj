@@ -1,0 +1,1058 @@
+{
+  "selected": {
+    "uniform": {
+      "b": 100,
+      "fee": 0.05
+    },
+    "climatology": {
+      "b": 10,
+      "fee": 0.03
+    },
+    "ensemble_smoothed": {
+      "b": 30,
+      "fee": 0.03
+    },
+    "noaa_calibrated": {
+      "b": 300,
+      "fee": 0.05
+    },
+    "kalshi": {
+      "b": 300,
+      "fee": 0.05
+    }
+  },
+  "comparisons": {
+    "train/target_noon": {
+      "seeds": {
+        "uniform": {
+          "settings": [
+            100,
+            0.05
+          ],
+          "pnl": {
+            "mean": 41.012800200113745,
+            "ci_low": 27.10062059701504,
+            "ci_high": 55.54039465812867,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 1075.1708892365561,
+            "closing_brier": 0.08105864056466597,
+            "fee_income": 132.6001983641315,
+            "fill_rate": 0.03444213044842313,
+            "filled_shares": 2652.0039672826297,
+            "fills": 397.30041152263374,
+            "final_inventory": 352.13151879986464,
+            "kalshi_brier": 0.08000840192043897,
+            "offered_shares": 108977.77345679014,
+            "opening_brier": 0.1388888888888889,
+            "peak_worst_case_loss": 86.05197260706507,
+            "pnl_per_share": 0.01546483365261985,
+            "tracking_error": 0.017411263921509067,
+            "trading_pnl": -91.58739816401773,
+            "days": 243,
+            "mean_pnl": 41.012800200113745,
+            "median_pnl": 7.360821897392043,
+            "sd_pnl": 111.6413025486886,
+            "worst_day": -123.84898091382854,
+            "p05_pnl": -73.80686993649596,
+            "share_days_profitable": 0.5267489711934157,
+            "daily_sharpe": 0.3673622509216729
+          }
+        },
+        "climatology": {
+          "settings": [
+            10,
+            0.03
+          ],
+          "pnl": {
+            "mean": 0.8308407478070408,
+            "ci_low": -0.8729414468736938,
+            "ci_high": 2.739587707751013,
+            "share_positive": 0.818
+          },
+          "summary": {
+            "cash_collected": 232.15189723940998,
+            "closing_brier": 0.08031449249712902,
+            "fee_income": 18.930716214833595,
+            "fill_rate": 0.008104740227098128,
+            "filled_shares": 631.0238738277865,
+            "fills": 502.5308641975309,
+            "final_inventory": 63.32964726182197,
+            "kalshi_brier": 0.08000840192043897,
+            "offered_shares": 108977.77345679014,
+            "opening_brier": 0.2044528052414633,
+            "peak_worst_case_loss": 18.851833721763697,
+            "pnl_per_share": 0.001316655014598998,
+            "tracking_error": 0.01486757500239013,
+            "trading_pnl": -18.09987546702655,
+            "days": 243,
+            "mean_pnl": 0.8308407478070408,
+            "median_pnl": -2.8195881373660256,
+            "sd_pnl": 14.677654693920257,
+            "worst_day": -26.455833152494677,
+            "p05_pnl": -15.354485292471026,
+            "share_days_profitable": 0.4074074074074074,
+            "daily_sharpe": 0.05660582464521322
+          }
+        },
+        "ensemble_smoothed": {
+          "settings": [
+            30,
+            0.03
+          ],
+          "pnl": {
+            "mean": 10.694589428469659,
+            "ci_low": 5.128464983764712,
+            "ci_high": 16.26883502672748,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 602.6267355112675,
+            "closing_brier": 0.08018552759975317,
+            "fee_income": 48.79992522653169,
+            "fill_rate": 0.01997002139298049,
+            "filled_shares": 1626.6641742177203,
+            "fills": 535.3045267489712,
+            "final_inventory": 148.92423159460483,
+            "kalshi_brier": 0.08000840192043897,
+            "offered_shares": 108977.77345679014,
+            "opening_brier": 0.15501071525196863,
+            "peak_worst_case_loss": 64.63877939864872,
+            "pnl_per_share": 0.00657455275525005,
+            "tracking_error": 0.014795270149270547,
+            "trading_pnl": -38.105335798062036,
+            "days": 243,
+            "mean_pnl": 10.694589428469659,
+            "median_pnl": 11.745978258081948,
+            "sd_pnl": 43.658933404999964,
+            "worst_day": -108.09801138623459,
+            "p05_pnl": -64.50745779258277,
+            "share_days_profitable": 0.6502057613168725,
+            "daily_sharpe": 0.2449576431302575
+          }
+        },
+        "noaa_calibrated": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 69.1374657288055,
+            "ci_low": 30.656643213203818,
+            "ci_high": 105.80221792831271,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 2421.8443944368178,
+            "closing_brier": 0.08151085775406992,
+            "fee_income": 292.4522160184474,
+            "fill_rate": 0.07132295802511196,
+            "filled_shares": 5849.044320368945,
+            "fills": 478.14814814814815,
+            "final_inventory": 806.9295607030365,
+            "kalshi_brier": 0.08000840192043897,
+            "offered_shares": 108977.77345679014,
+            "opening_brier": 0.13113849440283012,
+            "peak_worst_case_loss": 330.89655100206625,
+            "pnl_per_share": 0.011820301222207948,
+            "tracking_error": 0.018392997727745223,
+            "trading_pnl": -223.31475028964195,
+            "days": 243,
+            "mean_pnl": 69.1374657288055,
+            "median_pnl": 28.465174873230808,
+            "sd_pnl": 298.9272393319507,
+            "worst_day": -698.3257079641321,
+            "p05_pnl": -337.5440107221108,
+            "share_days_profitable": 0.5596707818930041,
+            "daily_sharpe": 0.23128526488022788
+          }
+        },
+        "kalshi": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 118.26245425839927,
+            "ci_low": 87.39845261003947,
+            "ci_high": 150.8749943457288,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 2179.833691211222,
+            "closing_brier": 0.08152573415464566,
+            "fee_income": 259.0498737835075,
+            "fill_rate": 0.0631327517691317,
+            "filled_shares": 5180.997475670147,
+            "fills": 439.761316872428,
+            "final_inventory": 694.0748402800424,
+            "kalshi_brier": 0.08000840192043897,
+            "offered_shares": 108977.77345679014,
+            "opening_brier": 0.11532729291264719,
+            "peak_worst_case_loss": 213.22523166362137,
+            "pnl_per_share": 0.022826194147701713,
+            "tracking_error": 0.018232176149996518,
+            "trading_pnl": -140.78741952510825,
+            "days": 243,
+            "mean_pnl": 118.26245425839927,
+            "median_pnl": 61.84680422264955,
+            "sd_pnl": 251.17945930005897,
+            "worst_day": -514.0478973928018,
+            "p05_pnl": -214.43030247192164,
+            "share_days_profitable": 0.6748971193415638,
+            "daily_sharpe": 0.47082852470481257
+          }
+        }
+      },
+      "pairs": {
+        "noaa_calibrated-uniform": {
+          "mean": 28.12466552869174,
+          "ci_low": -1.2064025864764405,
+          "ci_high": 55.82465371222951,
+          "share_positive": 0.965
+        },
+        "noaa_calibrated-climatology": {
+          "mean": 68.30662498099848,
+          "ci_low": 31.264017243743076,
+          "ci_high": 103.62945261508214,
+          "share_positive": 1.0
+        },
+        "noaa_calibrated-ensemble_smoothed": {
+          "mean": 58.44287630033583,
+          "ci_low": 23.695487643455156,
+          "ci_high": 92.89786635982576,
+          "share_positive": 0.999
+        },
+        "noaa_calibrated-kalshi": {
+          "mean": -49.1249885295938,
+          "ci_low": -71.83065745113016,
+          "ci_high": -27.118733346409055,
+          "share_positive": 0.0
+        }
+      }
+    },
+    "train/market_close": {
+      "seeds": {
+        "uniform": {
+          "settings": [
+            100,
+            0.05
+          ],
+          "pnl": {
+            "mean": 80.46001944934326,
+            "ci_low": 64.37913431252909,
+            "ci_high": 97.22473066258094,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 2338.9869267083377,
+            "closing_brier": 0.0024172589329262855,
+            "fee_income": 252.30658782935217,
+            "fill_rate": 0.027720339546665626,
+            "filled_shares": 5046.13175658704,
+            "fills": 681.5432098765432,
+            "final_inventory": 581.7804614077713,
+            "offered_shares": 262177.1418518519,
+            "opening_brier": 0.1388888888888889,
+            "peak_worst_case_loss": 86.36884549999775,
+            "pnl_per_share": 0.01594489072631004,
+            "trading_pnl": -171.84656838000893,
+            "days": 243,
+            "mean_pnl": 80.46001944934326,
+            "median_pnl": 44.99866475096951,
+            "sd_pnl": 133.2292849979391,
+            "worst_day": -111.70568092332542,
+            "p05_pnl": -66.547723913891,
+            "share_days_profitable": 0.6995884773662552,
+            "daily_sharpe": 0.603921423511264
+          }
+        },
+        "climatology": {
+          "settings": [
+            10,
+            0.03
+          ],
+          "pnl": {
+            "mean": 9.003533890871738,
+            "ci_low": 6.639184126134708,
+            "ci_high": 11.527985044752487,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 495.766996041146,
+            "closing_brier": 0.002190551503336909,
+            "fee_income": 35.14210887153841,
+            "fill_rate": 0.006264491368516847,
+            "filled_shares": 1171.4036290512795,
+            "fills": 869.0617283950618,
+            "final_inventory": 93.43936398636812,
+            "offered_shares": 262177.1418518519,
+            "opening_brier": 0.2044528052414633,
+            "peak_worst_case_loss": 18.865681296257293,
+            "pnl_per_share": 0.007686107220073842,
+            "trading_pnl": -26.13857498066668,
+            "days": 243,
+            "mean_pnl": 9.003533890871738,
+            "median_pnl": 4.457291191893717,
+            "sd_pnl": 19.742815302794913,
+            "worst_day": -20.93162798840791,
+            "p05_pnl": -12.445996913394737,
+            "share_days_profitable": 0.6255144032921811,
+            "daily_sharpe": 0.45604103329666174
+          }
+        },
+        "ensemble_smoothed": {
+          "settings": [
+            30,
+            0.03
+          ],
+          "pnl": {
+            "mean": 30.881529013774177,
+            "ci_low": 23.376032962789093,
+            "ci_high": 38.733535102547066,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 1330.0194388286077,
+            "closing_brier": 0.0020033632308019424,
+            "fee_income": 93.10742032751924,
+            "fill_rate": 0.01620844142495375,
+            "filled_shares": 3103.580677583967,
+            "fills": 932.1893004115226,
+            "final_inventory": 238.242691934113,
+            "offered_shares": 262177.1418518519,
+            "opening_brier": 0.15501071525196863,
+            "peak_worst_case_loss": 65.18251296883112,
+            "pnl_per_share": 0.009950290397417478,
+            "trading_pnl": -62.22589131374506,
+            "days": 243,
+            "mean_pnl": 30.881529013774177,
+            "median_pnl": 28.51918368888846,
+            "sd_pnl": 57.33229177993374,
+            "worst_day": -94.83723920836468,
+            "p05_pnl": -58.255967798897565,
+            "share_days_profitable": 0.7448559670781894,
+            "daily_sharpe": 0.5386411053008471
+          }
+        },
+        "noaa_calibrated": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 103.41576268056329,
+            "ci_low": 64.45308259542006,
+            "ci_high": 139.00240959767274,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 5421.716739018329,
+            "closing_brier": 0.0024804196419376304,
+            "fee_income": 569.0927829422634,
+            "fill_rate": 0.06042465163593445,
+            "filled_shares": 11381.855658845267,
+            "fills": 834.8847736625514,
+            "final_inventory": 1434.3250573093562,
+            "offered_shares": 262177.1418518519,
+            "opening_brier": 0.13113849440283012,
+            "peak_worst_case_loss": 344.6595852439362,
+            "pnl_per_share": 0.009086019519162929,
+            "trading_pnl": -465.67702026170014,
+            "days": 243,
+            "mean_pnl": 103.41576268056329,
+            "median_pnl": 80.25491911262407,
+            "sd_pnl": 298.4926625711713,
+            "worst_day": -610.0264117819606,
+            "p05_pnl": -389.3355393203116,
+            "share_days_profitable": 0.6213991769547325,
+            "daily_sharpe": 0.34645998259975747
+          }
+        },
+        "kalshi": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 151.7784155287217,
+            "ci_low": 116.41636118854882,
+            "ci_high": 186.8295104903705,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 5178.685818442325,
+            "closing_brier": 0.002480525928919338,
+            "fee_income": 535.6983196152778,
+            "fill_rate": 0.056980919713808385,
+            "filled_shares": 10713.966392305558,
+            "fills": 796.1111111111111,
+            "final_inventory": 1361.6593595058605,
+            "offered_shares": 262177.1418518519,
+            "opening_brier": 0.11532729291264719,
+            "peak_worst_case_loss": 225.45394921731224,
+            "pnl_per_share": 0.014166407656246178,
+            "trading_pnl": -383.9199040865562,
+            "days": 243,
+            "mean_pnl": 151.7784155287217,
+            "median_pnl": 89.47286391440593,
+            "sd_pnl": 276.7929386197347,
+            "worst_day": -428.0493378696142,
+            "p05_pnl": -221.4837542681954,
+            "share_days_profitable": 0.7078189300411523,
+            "daily_sharpe": 0.5483464147806126
+          }
+        }
+      },
+      "pairs": {
+        "noaa_calibrated-uniform": {
+          "mean": 22.955743231220037,
+          "ci_low": -6.42217603562094,
+          "ci_high": 50.493502754447974,
+          "share_positive": 0.936
+        },
+        "noaa_calibrated-climatology": {
+          "mean": 94.41222878969157,
+          "ci_low": 56.47291964692216,
+          "ci_high": 128.24632774290166,
+          "share_positive": 1.0
+        },
+        "noaa_calibrated-ensemble_smoothed": {
+          "mean": 72.53423366678912,
+          "ci_low": 38.592679487919845,
+          "ci_high": 103.83387397098112,
+          "share_positive": 1.0
+        },
+        "noaa_calibrated-kalshi": {
+          "mean": -48.362652848158405,
+          "ci_low": -71.31228892342064,
+          "ci_high": -26.025548085124026,
+          "share_positive": 0.0
+        }
+      }
+    },
+    "test/target_noon": {
+      "seeds": {
+        "uniform": {
+          "settings": [
+            100,
+            0.05
+          ],
+          "pnl": {
+            "mean": 2.288178449978488,
+            "ci_low": -11.568426979852843,
+            "ci_high": 15.795524555460062,
+            "share_positive": 0.627
+          },
+          "summary": {
+            "cash_collected": 931.491779255305,
+            "closing_brier": 0.0750237066350619,
+            "fee_income": 105.26659116858804,
+            "fill_rate": 0.02454067841074075,
+            "filled_shares": 2105.3318233717623,
+            "fills": 447.1142857142857,
+            "final_inventory": 333.7010529657163,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.13888888888888887,
+            "peak_worst_case_loss": 86.38806382384509,
+            "pnl_per_share": 0.001086849314952115,
+            "tracking_error": 0.013757879780452828,
+            "trading_pnl": -102.97841271860956,
+            "days": 105,
+            "mean_pnl": 2.288178449978488,
+            "median_pnl": 1.7265750555225168,
+            "sd_pnl": 71.97912904987247,
+            "worst_day": -136.72570589414795,
+            "p05_pnl": -120.85560283816503,
+            "share_days_profitable": 0.5142857142857142,
+            "daily_sharpe": 0.0317894712006458
+          }
+        },
+        "climatology": {
+          "settings": [
+            10,
+            0.03
+          ],
+          "pnl": {
+            "mean": -0.5674307788375684,
+            "ci_low": -2.5751593283772776,
+            "ci_high": 1.5116680363213761,
+            "share_positive": 0.31
+          },
+          "summary": {
+            "cash_collected": 175.09264005686273,
+            "closing_brier": 0.07427222165117336,
+            "fee_income": 13.461104730079692,
+            "fill_rate": 0.005082428713064458,
+            "filled_shares": 448.7034910026565,
+            "fills": 572.8571428571429,
+            "final_inventory": 53.91252235315738,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.1671673682609422,
+            "peak_worst_case_loss": 16.954836636332367,
+            "pnl_per_share": -0.001264600766910925,
+            "tracking_error": 0.010608043659238469,
+            "trading_pnl": -14.02853550891726,
+            "days": 105,
+            "mean_pnl": -0.5674307788375684,
+            "median_pnl": -0.919156255393375,
+            "sd_pnl": 11.121618194112605,
+            "worst_day": -26.600183449944268,
+            "p05_pnl": -19.460320448635173,
+            "share_days_profitable": 0.47619047619047616,
+            "daily_sharpe": -0.0510205231769192
+          }
+        },
+        "ensemble_smoothed": {
+          "settings": [
+            30,
+            0.03
+          ],
+          "pnl": {
+            "mean": 2.5389694053872653,
+            "ci_low": -4.633246186705555,
+            "ci_high": 8.867104303739517,
+            "share_positive": 0.767
+          },
+          "summary": {
+            "cash_collected": 467.3012882044263,
+            "closing_brier": 0.07422070832694067,
+            "fee_income": 36.759034379525836,
+            "fill_rate": 0.013910616967312526,
+            "filled_shares": 1225.3011459841932,
+            "fills": 619.9238095238095,
+            "final_inventory": 138.94211931498407,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.14196119624320316,
+            "peak_worst_case_loss": 56.873954635275325,
+            "pnl_per_share": 0.0020721186899306295,
+            "tracking_error": 0.0106271874615774,
+            "trading_pnl": -34.220064974138566,
+            "days": 105,
+            "mean_pnl": 2.5389694053872653,
+            "median_pnl": 4.1329406515347955,
+            "sd_pnl": 35.19305245032876,
+            "worst_day": -91.89880622388125,
+            "p05_pnl": -54.050517838811096,
+            "share_days_profitable": 0.5619047619047619,
+            "daily_sharpe": 0.07214405198215613
+          }
+        },
+        "noaa_calibrated": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 16.869687126948175,
+            "ci_low": -28.782217262498644,
+            "ci_high": 63.19706487974655,
+            "share_positive": 0.754
+          },
+          "summary": {
+            "cash_collected": 2019.1559861997782,
+            "closing_brier": 0.07562096400950219,
+            "fee_income": 235.6510958717994,
+            "fill_rate": 0.053169758306763466,
+            "filled_shares": 4713.021917435982,
+            "fills": 559.3523809523809,
+            "final_inventory": 748.45356295657,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.12286570025898179,
+            "peak_worst_case_loss": 262.6604231111403,
+            "pnl_per_share": 0.0035793780344068014,
+            "tracking_error": 0.0149432039186759,
+            "trading_pnl": -218.7814087448513,
+            "days": 105,
+            "mean_pnl": 16.869687126948175,
+            "median_pnl": 4.809741923617139,
+            "sd_pnl": 241.59065123696678,
+            "worst_day": -824.3535966402833,
+            "p05_pnl": -356.84767136349507,
+            "share_days_profitable": 0.5047619047619047,
+            "daily_sharpe": 0.06982756592845707
+          }
+        },
+        "kalshi": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 60.62611758468247,
+            "ci_low": 29.977231681788766,
+            "ci_high": 93.51888339452961,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 1782.8334133295652,
+            "closing_brier": 0.0755962607190922,
+            "fee_income": 208.30461273161117,
+            "fill_rate": 0.04679172016629386,
+            "filled_shares": 4166.092254632217,
+            "fills": 503.5238095238095,
+            "final_inventory": 642.4694583380711,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.10943962388938924,
+            "peak_worst_case_loss": 182.8953665263053,
+            "pnl_per_share": 0.014552274380691685,
+            "tracking_error": 0.014725556283183741,
+            "trading_pnl": -147.6784951469287,
+            "days": 105,
+            "mean_pnl": 60.62611758468247,
+            "median_pnl": 27.026117409851167,
+            "sd_pnl": 171.55375699262126,
+            "worst_day": -410.2986204154213,
+            "p05_pnl": -191.9761536314209,
+            "share_days_profitable": 0.638095238095238,
+            "daily_sharpe": 0.3533942867091513
+          }
+        }
+      },
+      "pairs": {
+        "noaa_calibrated-uniform": {
+          "mean": 14.581508676969687,
+          "ci_low": -27.40276812764699,
+          "ci_high": 53.34516547088198,
+          "share_positive": 0.737
+        },
+        "noaa_calibrated-climatology": {
+          "mean": 17.437117905785737,
+          "ci_low": -28.87593684638754,
+          "ci_high": 62.55392128266878,
+          "share_positive": 0.761
+        },
+        "noaa_calibrated-ensemble_smoothed": {
+          "mean": 14.33071772156091,
+          "ci_low": -28.187506855819933,
+          "ci_high": 57.13781085223604,
+          "share_positive": 0.734
+        },
+        "noaa_calibrated-kalshi": {
+          "mean": -43.7564304577343,
+          "ci_low": -83.29893641173908,
+          "ci_high": -8.455630021157905,
+          "share_positive": 0.008
+        }
+      }
+    },
+    "test/market_close": {
+      "seeds": {
+        "uniform": {
+          "settings": [
+            100,
+            0.05
+          ],
+          "pnl": {
+            "mean": 39.872572995457446,
+            "ci_low": 20.864410576221562,
+            "ci_high": 58.19920026356152,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 2094.554322847977,
+            "closing_brier": 0.0010442145575126557,
+            "fee_income": 212.82002578901995,
+            "fill_rate": 0.01957345295055466,
+            "filled_shares": 4256.400515780394,
+            "fills": 773.8761904761905,
+            "final_inventory": 561.2638864520351,
+            "offered_shares": 219811.20457142868,
+            "opening_brier": 0.13888888888888887,
+            "peak_worst_case_loss": 86.61196343688215,
+            "pnl_per_share": 0.009367674129262944,
+            "trading_pnl": -172.94745279356258,
+            "days": 105,
+            "mean_pnl": 39.872572995457446,
+            "median_pnl": 25.892700199860883,
+            "sd_pnl": 101.6615519926043,
+            "worst_day": -136.72570589414795,
+            "p05_pnl": -119.8166807922892,
+            "share_days_profitable": 0.6095238095238096,
+            "daily_sharpe": 0.3922089739330175
+          }
+        },
+        "climatology": {
+          "settings": [
+            10,
+            0.03
+          ],
+          "pnl": {
+            "mean": 6.716216420625887,
+            "ci_low": 4.218739828924213,
+            "ci_high": 9.061956479890236,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 414.66642643582327,
+            "closing_brier": 0.0005147052517336516,
+            "fee_income": 27.81868276758761,
+            "fill_rate": 0.004171124864318332,
+            "filled_shares": 927.2894255862533,
+            "fills": 1001.047619047619,
+            "final_inventory": 80.98141982201246,
+            "offered_shares": 219811.20457142868,
+            "opening_brier": 0.1671673682609422,
+            "peak_worst_case_loss": 16.97478207981061,
+            "pnl_per_share": 0.007242848063731284,
+            "trading_pnl": -21.102466346961716,
+            "days": 105,
+            "mean_pnl": 6.716216420625887,
+            "median_pnl": 5.52283579589772,
+            "sd_pnl": 13.341182547068529,
+            "worst_day": -23.22292994569098,
+            "p05_pnl": -15.045596852752078,
+            "share_days_profitable": 0.7047619047619048,
+            "daily_sharpe": 0.5034198727834399
+          }
+        },
+        "ensemble_smoothed": {
+          "settings": [
+            30,
+            0.03
+          ],
+          "pnl": {
+            "mean": 21.1587550122609,
+            "ci_low": 12.724919952216272,
+            "ci_high": 29.351681933571253,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 1135.2397157822327,
+            "closing_brier": 0.00047758031471377286,
+            "fee_income": 76.61789537697985,
+            "fill_rate": 0.01144414261584631,
+            "filled_shares": 2553.9298458993235,
+            "fills": 1096.0190476190476,
+            "final_inventory": 221.1805785135976,
+            "offered_shares": 219811.20457142868,
+            "opening_brier": 0.14196119624320316,
+            "peak_worst_case_loss": 56.926111217256945,
+            "pnl_per_share": 0.008284783172973254,
+            "trading_pnl": -55.45914036471894,
+            "days": 105,
+            "mean_pnl": 21.1587550122609,
+            "median_pnl": 17.467311030752626,
+            "sd_pnl": 45.01288776343532,
+            "worst_day": -91.45017850544764,
+            "p05_pnl": -56.50949378146595,
+            "share_days_profitable": 0.7333333333333333,
+            "daily_sharpe": 0.4700599331342721
+          }
+        },
+        "noaa_calibrated": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 61.497306089915625,
+            "ci_low": 7.154999528229728,
+            "ci_high": 114.232231716346,
+            "share_positive": 0.988
+          },
+          "summary": {
+            "cash_collected": 4839.659837346467,
+            "closing_brier": 0.001120658652298325,
+            "fee_income": 491.9298381310709,
+            "fill_rate": 0.04393796246401249,
+            "filled_shares": 9838.596762621422,
+            "fills": 992.8285714285714,
+            "final_inventory": 1396.654640756402,
+            "offered_shares": 219811.20457142868,
+            "opening_brier": 0.12286570025898179,
+            "peak_worst_case_loss": 272.9543220943352,
+            "pnl_per_share": 0.006250617600627237,
+            "trading_pnl": -430.43253204115524,
+            "days": 105,
+            "mean_pnl": 61.497306089915625,
+            "median_pnl": 53.11903040761672,
+            "sd_pnl": 281.93442824407475,
+            "worst_day": -604.7030283846061,
+            "p05_pnl": -387.38393008158,
+            "share_days_profitable": 0.5904761904761905,
+            "daily_sharpe": 0.21812627309452434
+          }
+        },
+        "kalshi": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 105.36140706323614,
+            "ci_low": 65.18691574872865,
+            "ci_high": 145.49818807196453,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 4603.5272367925,
+            "closing_brier": 0.001118871974270718,
+            "fee_income": 464.62944781459,
+            "fill_rate": 0.041349687335589906,
+            "filled_shares": 9292.588956291802,
+            "fills": 936.0857142857143,
+            "final_inventory": 1310.6937851702148,
+            "offered_shares": 219811.20457142868,
+            "opening_brier": 0.10943962388938924,
+            "peak_worst_case_loss": 198.81340434441387,
+            "pnl_per_share": 0.011338218827800221,
+            "trading_pnl": -359.26804075135385,
+            "days": 105,
+            "mean_pnl": 105.36140706323614,
+            "median_pnl": 63.549324585320846,
+            "sd_pnl": 219.83941483375793,
+            "worst_day": -397.54175952939204,
+            "p05_pnl": -203.03029584577706,
+            "share_days_profitable": 0.6952380952380952,
+            "daily_sharpe": 0.4792653180182007
+          }
+        }
+      },
+      "pairs": {
+        "noaa_calibrated-uniform": {
+          "mean": 21.62473309445817,
+          "ci_low": -22.96998738105382,
+          "ci_high": 61.77897514953683,
+          "share_positive": 0.845
+        },
+        "noaa_calibrated-climatology": {
+          "mean": 54.781089669289734,
+          "ci_low": 1.2693899793873333,
+          "ci_high": 106.72075180174443,
+          "share_positive": 0.978
+        },
+        "noaa_calibrated-ensemble_smoothed": {
+          "mean": 40.33855107765472,
+          "ci_low": -8.679880335110537,
+          "ci_high": 88.8557241134774,
+          "share_positive": 0.943
+        },
+        "noaa_calibrated-kalshi": {
+          "mean": -43.864100973320525,
+          "ci_low": -83.49293368115154,
+          "ci_high": -8.623243112141147,
+          "share_positive": 0.008
+        }
+      }
+    },
+    "test/same_settings": {
+      "seeds": {
+        "uniform": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": -31.274024213784642,
+            "ci_low": -68.48630553786049,
+            "ci_high": 6.9218272286043305,
+            "share_positive": 0.049
+          },
+          "summary": {
+            "cash_collected": 2457.1969804588803,
+            "closing_brier": 0.07559413563342615,
+            "fee_income": 275.2691108302716,
+            "fill_rate": 0.06466612425078647,
+            "filled_shares": 5505.382216605423,
+            "fills": 624.2666666666667,
+            "final_inventory": 940.9181530869591,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.13888888888888887,
+            "peak_worst_case_loss": 262.00491713523843,
+            "pnl_per_share": -0.005680627244999526,
+            "tracking_error": 0.01449465578082639,
+            "trading_pnl": -306.54313504405627,
+            "days": 105,
+            "mean_pnl": -31.274024213784642,
+            "median_pnl": -43.086058408421195,
+            "sd_pnl": 205.35676411002453,
+            "worst_day": -405.7737939536587,
+            "p05_pnl": -371.5397260230545,
+            "share_days_profitable": 0.4095238095238095,
+            "daily_sharpe": -0.15229118139507145
+          }
+        },
+        "climatology": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": -117.53559697752097,
+            "ci_low": -172.1507796258049,
+            "ci_high": -62.52117635386509,
+            "share_positive": 0.0
+          },
+          "summary": {
+            "cash_collected": 2485.429241939239,
+            "closing_brier": 0.07560258782892486,
+            "fee_income": 297.14570864253847,
+            "fill_rate": 0.06833023757419483,
+            "filled_shares": 5942.9141728507575,
+            "fills": 644.3428571428572,
+            "final_inventory": 1030.6541205784167,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.1671673682609422,
+            "peak_worst_case_loss": 469.08275726031957,
+            "pnl_per_share": -0.019777434699370783,
+            "tracking_error": 0.014702242773497133,
+            "trading_pnl": -414.68130562005945,
+            "days": 105,
+            "mean_pnl": -117.53559697752097,
+            "median_pnl": -126.19449413112989,
+            "sd_pnl": 309.4166898794783,
+            "worst_day": -880.3773842105957,
+            "p05_pnl": -665.8544546149673,
+            "share_days_profitable": 0.38095238095238093,
+            "daily_sharpe": -0.3798618523884492
+          }
+        },
+        "ensemble_smoothed": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": -65.38968021445152,
+            "ci_low": -126.73736144457735,
+            "ci_high": -8.26277049795262,
+            "share_positive": 0.011
+          },
+          "summary": {
+            "cash_collected": 2226.851544453601,
+            "closing_brier": 0.0755992196807921,
+            "fee_income": 270.74343107221137,
+            "fill_rate": 0.06272071120939705,
+            "filled_shares": 5414.868621444218,
+            "fills": 610.847619047619,
+            "final_inventory": 905.5375083510377,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.14196119624320316,
+            "peak_worst_case_loss": 501.70902859740704,
+            "pnl_per_share": -0.012075949535597633,
+            "tracking_error": 0.014703727160580172,
+            "trading_pnl": -336.1331112866629,
+            "days": 105,
+            "mean_pnl": -65.38968021445152,
+            "median_pnl": -58.50437466085532,
+            "sd_pnl": 320.1501083696943,
+            "worst_day": -919.3950271579988,
+            "p05_pnl": -607.0546165079659,
+            "share_days_profitable": 0.38095238095238093,
+            "daily_sharpe": -0.20424694074737776
+          }
+        },
+        "noaa_calibrated": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 16.869687126948175,
+            "ci_low": -28.782217262498644,
+            "ci_high": 63.19706487974655,
+            "share_positive": 0.754
+          },
+          "summary": {
+            "cash_collected": 2019.1559861997782,
+            "closing_brier": 0.07562096400950219,
+            "fee_income": 235.6510958717994,
+            "fill_rate": 0.053169758306763466,
+            "filled_shares": 4713.021917435982,
+            "fills": 559.3523809523809,
+            "final_inventory": 748.45356295657,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.12286570025898179,
+            "peak_worst_case_loss": 262.6604231111403,
+            "pnl_per_share": 0.0035793780344068014,
+            "tracking_error": 0.0149432039186759,
+            "trading_pnl": -218.7814087448513,
+            "days": 105,
+            "mean_pnl": 16.869687126948175,
+            "median_pnl": 4.809741923617139,
+            "sd_pnl": 241.59065123696678,
+            "worst_day": -824.3535966402833,
+            "p05_pnl": -356.84767136349507,
+            "share_days_profitable": 0.5047619047619047,
+            "daily_sharpe": 0.06982756592845707
+          }
+        },
+        "kalshi": {
+          "settings": [
+            300,
+            0.05
+          ],
+          "pnl": {
+            "mean": 60.62611758468247,
+            "ci_low": 29.977231681788766,
+            "ci_high": 93.51888339452961,
+            "share_positive": 1.0
+          },
+          "summary": {
+            "cash_collected": 1782.8334133295652,
+            "closing_brier": 0.0755962607190922,
+            "fee_income": 208.30461273161117,
+            "fill_rate": 0.04679172016629386,
+            "filled_shares": 4166.092254632217,
+            "fills": 503.5238095238095,
+            "final_inventory": 642.4694583380711,
+            "kalshi_brier": 0.07346325396825398,
+            "offered_shares": 88325.67047619044,
+            "opening_brier": 0.10943962388938924,
+            "peak_worst_case_loss": 182.8953665263053,
+            "pnl_per_share": 0.014552274380691685,
+            "tracking_error": 0.014725556283183741,
+            "trading_pnl": -147.6784951469287,
+            "days": 105,
+            "mean_pnl": 60.62611758468247,
+            "median_pnl": 27.026117409851167,
+            "sd_pnl": 171.55375699262126,
+            "worst_day": -410.2986204154213,
+            "p05_pnl": -191.9761536314209,
+            "share_days_profitable": 0.638095238095238,
+            "daily_sharpe": 0.3533942867091513
+          }
+        }
+      },
+      "pairs": {
+        "noaa_calibrated-uniform": {
+          "mean": 48.14371134073281,
+          "ci_low": 3.929131442711148,
+          "ci_high": 82.9572530988628,
+          "share_positive": 0.986
+        },
+        "noaa_calibrated-climatology": {
+          "mean": 134.40528410446913,
+          "ci_low": 65.23476515904387,
+          "ci_high": 196.31079957134736,
+          "share_positive": 1.0
+        },
+        "noaa_calibrated-ensemble_smoothed": {
+          "mean": 82.25936734139971,
+          "ci_low": 28.368383901933893,
+          "ci_high": 137.33477297112705,
+          "share_positive": 1.0
+        },
+        "noaa_calibrated-kalshi": {
+          "mean": -43.7564304577343,
+          "ci_low": -83.29893641173908,
+          "ci_high": -8.455630021157905,
+          "share_positive": 0.008
+        }
+      }
+    }
+  },
+  "days": 348,
+  "test_days": 105
+}

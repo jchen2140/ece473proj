@@ -1,0 +1,11 @@
+{
+  "selected": {
+    "window": 30,
+    "mean_method": "bias",
+    "spread_method": "scaled",
+    "train_days": 242,
+    "train_brier": 0.1314448899203544,
+    "train_log_loss": 0.41984932350452786
+  },
+  "days": 350
+}

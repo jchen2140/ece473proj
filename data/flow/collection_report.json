@@ -1,0 +1,12 @@
+{
+  "contracts_requested": 2190,
+  "contracts_missing": 0,
+  "trades": 2532075,
+  "candles": 82751,
+  "run": {
+    "cached": 2146,
+    "fetched": 44
+  },
+  "failures": [],
+  "finished_at": "2026-11-01T19:22:51.627243+00:00"
+}
