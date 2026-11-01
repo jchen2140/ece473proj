@@ -4,6 +4,7 @@ Reads data/results/scored_rows.csv. Reuses evaluate.COLUMN / LABEL / contract_lo
 bootstrap so the figures match the scored tables. Writes figures and extra CSVs under
 data/results/.
 """
+import sys
 from collections import defaultdict
 
 import matplotlib
@@ -149,13 +150,13 @@ def write_markdown(split_rows, monthly):
             f"{r['climatology_brier']:.4f} | {r['persistence_brier']:.4f} | {r['market_brier']:.4f} |"
         )
     path = evaluate.RESULTS / 'date_comparison.md'
-    path.write_text('\n'.join(lines) + '\n')
+    path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
     return path
 
 
-def plot_reliability(bins_by_model, title, path):
+def plot_reliability(bins_by_model, title, path, models=None):
     fig, axes = plt.subplots(2, 2, figsize=(9, 8), sharex=True, sharey=True)
-    for ax, (model, _) in zip(axes.ravel(), evaluate.MODELS):
+    for ax, model in zip(axes.ravel(), models or [m for m, _ in evaluate.MODELS]):
         bins = bins_by_model[model]
         ax.plot([0, 1], [0, 1], color='0.6', linewidth=1, linestyle='--')
         if bins:
@@ -262,6 +263,7 @@ def plot_monthly_brier(monthly, path):
 
 
 def main():
+    sys.stdout.reconfigure(encoding='utf-8')  # Same reason as evaluate.main.
     rows = evaluate.read_csv(evaluate.RESULTS / 'scored_rows.csv')
     models = [m for m, _ in evaluate.MODELS]
     shared = complete_rows(rows, models)
@@ -295,7 +297,7 @@ def main():
     plot_train_vs_test(splits, FIGURES / 'train_vs_test_brier.png')
     plot_monthly_brier(monthly, FIGURES / 'monthly_brier.png')
 
-    print(md.read_text())
+    print(md.read_text(encoding='utf-8'))
     print('Wrote figures to', FIGURES)
 
 

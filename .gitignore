@@ -4,3 +4,4 @@ data/raw/gefs/
 data/raw/ghcn/*.dly
 data/raw/ghcn/ghcnd-stations.txt
 data/days/
+data/raw/kalshi_flow/

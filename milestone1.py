@@ -60,7 +60,7 @@ def training_sample(history, target):
 
 
 def read_csv(name):
-    with (DATA/name).open(newline='') as f:
+    with (DATA/name).open(newline='', encoding='utf-8') as f:
         return list(csv.DictReader(f))
 
 

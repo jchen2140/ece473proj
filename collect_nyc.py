@@ -73,7 +73,7 @@ def cached_json(name, url):
 def write_csv(name, rows):
     path = DATA / name
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('w', newline='') as f:
+    with path.open('w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)

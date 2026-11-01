@@ -1,0 +1,13 @@
+{
+  "source": "train days, noon cutoff to noon on the target day",
+  "days": 243,
+  "real_arrivals_per_day": 3588.748971193416,
+  "real_median_size": 6.0,
+  "real_mean_size": 30.366507752853565,
+  "real_shares_per_day": 108977.7734567901,
+  "arrivals": 300,
+  "size_sigma": 1.5123186132327548,
+  "median_size": 71.77497942386832,
+  "belief_concentration": 106.16599100102464,
+  "threshold": 0.010000000000000009
+}
