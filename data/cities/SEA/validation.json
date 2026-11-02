@@ -1,0 +1,12 @@
+{
+  "city": "SEA",
+  "series": "KXHIGHTSEA",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 33333,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.8962962962962963,
+    "mean_gap_f": 0.8148148148148148
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "city": "DCA",
+  "series": "KXHIGHTDC",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 30571,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.8444444444444444,
+    "mean_gap_f": 0.7851851851851852
+  }
+}

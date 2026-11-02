@@ -1,0 +1,12 @@
+{
+  "city": "BOS",
+  "series": "KXHIGHTBOS",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 30926,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.8888888888888888,
+    "mean_gap_f": 0.8074074074074075
+  }
+}

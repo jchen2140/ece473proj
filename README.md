@@ -63,6 +63,19 @@ Replaces the single-source NOAA forecast with a model that combines several fore
 - **`trader_analysis.py`:** volume and price moves by hour against model release times, Kalshi accuracy by lead time, and taker returns by price (favorite-longshot), size, timing and agreement with the ML forecast.
 - `data/raw/{ecmwf,mos,asos}/` are gitignored caches; `data/features/` is committed.
 
+## Information efficiency across 15 Kalshi cities
+
+Asks how much public weather information the price already holds, how fast new information reaches it, and whether liquidity matters. Window: Apr 1 – Aug 13, 2026, the period when every city settled on the NWS Climatological Report.
+
+```bash
+.venv/bin/python collect_cities.py   # Kalshi hourly quotes, NBM and GFS MOS runs, ASOS obs -> data/cities/<code>/ (resumable, ~1 h)
+.venv/bin/python efficiency.py       # -> data/results/efficiency/efficiency_tables.md and figures
+```
+
+- **`cities.py`:** the 15 series and their settlement stations, taken from the contracts' own rules. `collect_cities.py` checks each mapping: the settled high is within 1°F of the station's ASOS maximum on 76–96% of days.
+- **Public forecast:** the mean of the latest NBM and GFS MOS max forecasts, bias-corrected with days through D-2. NBM and GFS MOS are archived for every run and every station; ECMWF and GEFS GRIB per city would not be. In NYC this two-source forecast scores Brier 0.119, against 0.116 for the ML forest and 0.111 for Kalshi, so the ML model is not needed here.
+- **`efficiency.py`:** compares accuracy by hour for the public forecast, the public forecast plus observations so far, and Kalshi. It runs event studies on NBM releases, GFS MOS releases and hourly observations (price path from 6 h before to 8 h after, against the warranted move), and relates the results to volume and spread across and within cities. Caveats are listed at the end of the generated report.
+
 ## Run
 
 ```bash

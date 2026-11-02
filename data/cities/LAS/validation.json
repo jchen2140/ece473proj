@@ -1,0 +1,12 @@
+{
+  "city": "LAS",
+  "series": "KXHIGHTLV",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 32539,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.9555555555555556,
+    "mean_gap_f": 0.7037037037037037
+  }
+}

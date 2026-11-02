@@ -1,0 +1,12 @@
+{
+  "city": "DEN",
+  "series": "KXHIGHDEN",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 31720,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.7555555555555555,
+    "mean_gap_f": 1.0
+  }
+}

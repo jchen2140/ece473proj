@@ -1,0 +1,12 @@
+{
+  "city": "SFO",
+  "series": "KXHIGHTSFO",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 33104,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.8740740740740741,
+    "mean_gap_f": 0.8888888888888888
+  }
+}

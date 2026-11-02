@@ -1,0 +1,12 @@
+{
+  "city": "AUS",
+  "series": "KXHIGHAUS",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 31149,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.9037037037037037,
+    "mean_gap_f": 0.7925925925925926
+  }
+}

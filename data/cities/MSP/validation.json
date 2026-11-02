@@ -1,0 +1,12 @@
+{
+  "city": "MSP",
+  "series": "KXHIGHTMIN",
+  "days": 135,
+  "dropped_days": {},
+  "candles": 31275,
+  "asos_check": {
+    "days": 135,
+    "within_1f": 0.9111111111111111,
+    "mean_gap_f": 0.725925925925926
+  }
+}
