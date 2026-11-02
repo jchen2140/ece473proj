@@ -1,0 +1,30 @@
+{
+  "selected_on_train_only": {
+    "window": 30,
+    "spread_method": "scaled",
+    "training_days": 242,
+    "training_start": "2025-09-01",
+    "training_end": "2026-04-30",
+    "train_brier": 0.1314448899203544,
+    "train_log_loss": 0.41984932350452786
+  },
+  "variants": [
+    "empirical_smoothed",
+    "gaussian_uncorrected",
+    "bias_only",
+    "spread_only",
+    "bias_and_spread"
+  ],
+  "uniform_mix": 0.02,
+  "minimum_gaussian_sd_f": 1.5,
+  "bootstrap_replicates": 1000,
+  "forecast_days": 350,
+  "exported_rows": 10500,
+  "test_days": 105,
+  "confirmation_status": "exploratory_previously_examined_test_period",
+  "hyperparameter_selection": "Fully corrected Gaussian train log loss; shared by every variant, not independently optimized per variant.",
+  "input_sha256": {
+    "matched_with_climatology.csv": "15115c108e99505f52eef6e3048368f05d2c68101a2cfbe621bda1485d31948a",
+    "ensemble_daily_maxima.csv": "6713cf9c852d5d98d9ca08344e1c61ddabf47b3e67d8c84ff7142ad603f27008"
+  }
+}

@@ -26,6 +26,8 @@ python3 inspect_nyc.py                         # offline consistency checks
 
 ## Market-making backtest (Milestone 2)
 
+For Jessie's controlled forecast experiment, see [CALIBRATION_EXPERIMENT.md](CALIBRATION_EXPERIMENT.md). It separates Gaussian distribution shape, bias correction, and spread correction; exports all five probability variants; and compares replay PnL under common fees and equal opening loss budgets. Run `calibration_ablation.py`, `ablation_replay.py`, then `plot_calibration_ablation.py`. Outputs stay separate under `data/results/calibration_ablation/`.
+
 Kalshi is the market benchmark throughout; Polymarket is not used because its NYC contracts settle on LaGuardia, not Central Park. Run after the steps above:
 
 ```bash
