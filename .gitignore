@@ -5,3 +5,7 @@ data/raw/ghcn/*.dly
 data/raw/ghcn/ghcnd-stations.txt
 data/days/
 data/raw/kalshi_flow/
+data/raw/ecmwf/
+data/raw/mos/
+data/raw/asos/
+data/raw/cities/

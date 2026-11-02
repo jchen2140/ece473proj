@@ -1,0 +1,79 @@
+{
+  "model": "ML random forest",
+  "features": [
+    "dev_ecmwf",
+    "ecmwf_t850_anom",
+    "ecmwf_dewpoint_18z_f",
+    "ecmwf_mslp_18z_hpa",
+    "ecmwf_night_max",
+    "dev_nbm",
+    "nbm_max_sd_f",
+    "nbm_hourly_gap",
+    "nbm_sky_pct",
+    "nbm_precip_prob_12h",
+    "nbm_solar_18z",
+    "nbm_dewpoint_18z_f",
+    "nbm_wind_u_18z",
+    "nbm_wind_v_18z",
+    "dev_mav",
+    "mav_cloud_18z",
+    "mav_precip_prob_12h",
+    "mav_wind_u_18z",
+    "mav_wind_v_18z",
+    "dev_met",
+    "met_cloud_18z",
+    "met_precip_prob_12h",
+    "obs_vs_baseline",
+    "obs_max_so_far_anom",
+    "obs_temp_change_24h",
+    "obs_dewpoint_f",
+    "obs_wind_u_kt",
+    "obs_wind_v_kt",
+    "obs_mslp_hpa",
+    "obs_mslp_change_12h",
+    "obs_sky_cover",
+    "coast_gradient",
+    "lga_minus_nyc",
+    "bias_ecmwf",
+    "bias_nbm",
+    "bias_mav",
+    "bias_met",
+    "bias_baseline",
+    "mae_baseline",
+    "doy_sin",
+    "doy_cos",
+    "baseline_anom",
+    "persistence_vs_baseline",
+    "source_sd",
+    "source_range"
+  ],
+  "refit_days": 7,
+  "gap_days": 2,
+  "history_start": "2024-03-02",
+  "scores": [
+    {
+      "split": "test",
+      "model": "consensus",
+      "brier": 0.11540196354413973,
+      "log_loss": 0.36666729988022834
+    },
+    {
+      "split": "test",
+      "model": "ml",
+      "brier": 0.1128867263151363,
+      "log_loss": 0.35548334224688605
+    },
+    {
+      "split": "train",
+      "model": "consensus",
+      "brier": 0.13314551318941797,
+      "log_loss": 0.42336253402577906
+    },
+    {
+      "split": "train",
+      "model": "ml",
+      "brier": 0.12123080182082564,
+      "log_loss": 0.37760092388109623
+    }
+  ]
+}

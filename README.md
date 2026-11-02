@@ -43,6 +43,26 @@ Kalshi is the market benchmark throughout; Polymarket is not used because its NY
 - **`traders.py`:** a what-if population of noise and informed traders. Informed beliefs center on the later Kalshi midpoint, and the informed share is swept because the data cannot identify it.
 - `data/raw/kalshi_flow/` (about 800 MB) is gitignored; `data/flow/` holds the compressed tables.
 
+## Multi-source ML forecast and trader analysis (Milestone 3)
+
+Replaces the single-source NOAA forecast with a model that combines several forecast systems and live observations, then studies how Kalshi traders behave relative to it. Run after the Milestone 2 steps (`ml_model.py` must run before `backtest.py`, which now has an ML seed):
+
+```bash
+.venv/bin/python collect_features.py --workers 8  # ECMWF, NWS MOS, ASOS -> data/features/daily_features.csv (resumable)
+.venv/bin/python ml_model.py --ablation           # walk-forward random forest -> data/ml_forecasts.csv, data/ml_daily.csv
+.venv/bin/python ml_compare.py                    # ML vs Kalshi/NOAA, regimes, trading, importance -> data/results/ml/
+.venv/bin/python trader_analysis.py               # trader behaviour -> data/results/traders/
+.venv/bin/python backtest.py && .venv/bin/python plot_backtest.py
+.venv/bin/python -m unittest test_ml_model.py
+```
+
+- **Sources (all free, no keys):** ECMWF IFS HRES 00 UTC open data (Google Cloud mirror, byte-range GRIB); NWS MOS from the Iowa Environmental Mesonet archive: NBM (`NBS`, including its own max-temperature spread), GFS (`MAV`) and NAM (`MET`); ASOS observations at Central Park, LaGuardia, JFK and Newark. Every input is public by the noon cutoff on D-1: MOS runs must be at least 3 (NBM) or 6 (GFS, NAM) hours old, and observations stop at the cutoff.
+- **History:** training starts March 2024 (the first 0.25-degree ECMWF open data), 17 months before the Kalshi window, using the GHCN Central Park high as the target. The same model therefore has roughly 2.5 times as many training days as the NOAA correction.
+- **`ml_model.py`:** a random forest predicts the residual of the high from the mean of the four point forecasts, refit weekly on days up to D-2; a second fit gives each day's spread. The plain forecast average is kept as a reference. `--ablation` refits without each feature group (slow). See DATA_NOTES.md for why the forest was chosen.
+- **`ml_compare.py`:** identical-row Brier/log loss with day-bootstrap intervals, point-forecast MAE including the high implied by Kalshi prices, where ML wins or loses by weather regime, disagreement signal tests, a fee-aware trading backtest at the quoted bid/ask, and grouped permutation importance.
+- **`trader_analysis.py`:** volume and price moves by hour against model release times, Kalshi accuracy by lead time, and taker returns by price (favorite-longshot), size, timing and agreement with the ML forecast.
+- `data/raw/{ecmwf,mos,asos}/` are gitignored caches; `data/features/` is committed.
+
 ## Run
 
 ```bash

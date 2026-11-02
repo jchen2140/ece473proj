@@ -12,8 +12,8 @@ import forecasts
 
 FIGURES = backtest.OUT / 'figures'
 INK, MUTED, GRID, SURFACE = '#0b0b0b', '#52514e', '#e7e6e1', '#fcfcfb'
-COLOR = dict(zip(forecasts.SEEDS, ('#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4')))
-MARKER = dict(zip(forecasts.SEEDS, 'osD^v'))  # Identity is never carried by color alone.
+COLOR = dict(zip(forecasts.SEEDS, ('#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#7a4fc2', '#e87ba4')))
+MARKER = dict(zip(forecasts.SEEDS, 'osD^Pv'))  # Identity is never carried by color alone.
 FEE = 0.05
 BMAX = 3000  # Larger b losses would flatten the region where the choice matters.
 

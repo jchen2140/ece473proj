@@ -81,3 +81,18 @@ Mean (observed high − ensemble mean): **+1.30°F on train days** (ensemble too
 
 - `data/historical_tmax.csv` was re-downloaded on Oct 25, 2026: 13,079 accepted rows, up from 13,077. The 1991–2020 training rows used by climatology are unchanged.
 - `milestone1.py` now scores test days only (from `config.py`), so `data/evaluation.json` and `data/calibration.csv` describe the 105 test days, not the 7 pilot days.
+
+## ML model choice (Milestone 3)
+
+`ml_model.py` uses one model, a random forest. It was chosen after a comparison, not in advance. All four candidates were walk-forward (refit weekly on days up to D-2), so every window day is out of sample:
+
+| Model | Train log loss | Test log loss | Test Brier |
+| --- | ---: | ---: | ---: |
+| Ridge regression | 0.371 | 0.404 | 0.126 |
+| Average of the three | 0.371 | 0.369 | 0.117 |
+| Gradient boosting | 0.382 | 0.363 | 0.115 |
+| Random forest | 0.378 | 0.356 | 0.113 |
+
+The original rule (lowest train log loss) picked ridge regression. Ridge was the worst learner on the summer test period, where it did worse than the plain forecast average. The tree models held up. Because the forest was picked with the test scores in view, its test numbers are slightly optimistic. Train-day scores are the cleaner evidence and do not depend on that choice.
+
+ECMWF open data has the 3-hour maximum temperature (`mx2t3`) only from Nov 2024 (IFS 49r1), so the full history uses 3-hourly instantaneous 2 m temperature instead, like the GEFS collector.

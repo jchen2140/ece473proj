@@ -41,7 +41,8 @@ INFORMED_SHARES = (0.0, 0.1, 0.25, 0.5, 0.75)
 SYNTHETIC_REPLICATES = 3
 SYNTHETIC_FEE = 0.01  # Shared by all seeds, and below noise_slippage so noise traders can fill.
 PAIRS = [('noaa_calibrated', 'uniform'), ('noaa_calibrated', 'climatology'),
-         ('noaa_calibrated', 'ensemble_smoothed'), ('noaa_calibrated', 'kalshi')]
+         ('noaa_calibrated', 'ensemble_smoothed'), ('noaa_calibrated', 'kalshi'),
+         ('ml', 'noaa_calibrated'), ('ml', 'kalshi')]
 
 
 def epoch(text):

@@ -11,9 +11,9 @@ from collect_nyc import DATA
 
 MIN_SD = 1.5
 UNIFORM_MIX = 0.02  # Every opening price stays positive, so the LMSR is defined.
-SEEDS = ['uniform', 'climatology', 'ensemble_smoothed', 'noaa_calibrated', 'kalshi']
+SEEDS = ['uniform', 'climatology', 'ensemble_smoothed', 'noaa_calibrated', 'ml', 'kalshi']
 LABEL = {'uniform': 'Uniform', 'climatology': 'Climatology', 'ensemble_smoothed': 'Raw GEFS (smoothed)',
-         'noaa_calibrated': 'Calibrated NOAA', 'kalshi': 'Kalshi noon'}
+         'noaa_calibrated': 'Calibrated NOAA', 'ml': 'ML random forest', 'kalshi': 'Kalshi noon'}
 
 
 def read_rows(name):
@@ -62,15 +62,17 @@ def day_groups():
 def day_records():
     """One record per day with quotes and a calibrated forecast: tickers, seeds, winner, cutoff."""
     calibrated = {r['market_ticker']: float(r['noaa_calibrated_probability']) for r in read_rows('noaa_calibrated.csv')}
+    ml = {r['market_ticker']: float(r['ml_probability']) for r in read_rows('ml_forecasts.csv')}  # From ml_model.py.
     records = []
     for day, group in day_groups().items():
-        if any(r['market_midpoint'] == '' for r in group) or any(r['market_ticker'] not in calibrated for r in group):
+        if any(r['market_midpoint'] == '' or r['market_ticker'] not in calibrated or r['market_ticker'] not in ml for r in group):
             continue
         n = len(group)
         seeds = {'uniform': [1 / n] * n,
                  'climatology': floor_probabilities([float(r['climatology_probability']) for r in group]),
                  'ensemble_smoothed': [(int(r['members_in_bin']) + 0.5) / (31 + n / 2) for r in group],
                  'noaa_calibrated': [calibrated[r['market_ticker']] for r in group],
+                 'ml': [ml[r['market_ticker']] for r in group],
                  'kalshi': floor_probabilities([float(r['market_midpoint']) for r in group])}
         records.append({'day': day, 'tickers': [r['market_ticker'] for r in group],
                         'winner': next(i for i, r in enumerate(group) if r['outcome'] == '1'),

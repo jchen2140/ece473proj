@@ -12,6 +12,7 @@ Real Kalshi taker trades replayed as limit orders against an LMSR opened at the 
 | Climatology | 10 | 0.03 | -$1 [-$3, $2] | -$1 | -$27 | 48% | 449 | $17 | 0.1672 | 0.0743 |
 | Raw GEFS (smoothed) | 30 | 0.03 | $3 [-$5, $9] | $4 | -$92 | 56% | 1,225 | $57 | 0.1420 | 0.0742 |
 | Calibrated NOAA | 300 | 0.05 | $17 [-$29, $63] | $5 | -$824 | 50% | 4,713 | $263 | 0.1229 | 0.0756 |
+| ML random forest | 300 | 0.05 | $59 [$24, $89] | $43 | -$344 | 64% | 4,531 | $197 | 0.1129 | 0.0756 |
 | Kalshi noon | 300 | 0.05 | $61 [$30, $94] | $27 | -$410 | 64% | 4,166 | $183 | 0.1094 | 0.0756 |
 
 | Difference in daily PnL | Mean [95% CI] | Share of replicates above 0 |
@@ -20,6 +21,8 @@ Real Kalshi taker trades replayed as limit orders against an LMSR opened at the 
 | Calibrated NOAA minus Climatology | $17 [-$29, $63] | 0.761 |
 | Calibrated NOAA minus Raw GEFS (smoothed) | $14 [-$28, $57] | 0.734 |
 | Calibrated NOAA minus Kalshi noon | -$44 [-$83, -$8] | 0.008 |
+| ML random forest minus Calibrated NOAA | $42 [$6, $83] | 0.984 |
+| ML random forest minus Kalshi noon | -$2 [-$27, $20] | 0.425 |
 
 ## Same settings for every seed (b 300, fee 0.05, the Calibrated NOAA selection)
 
@@ -31,6 +34,7 @@ Above, each seed has its own settings. Here only the opening forecast differs.
 | Climatology | -$118 [-$172, -$63] | -$880 |
 | Raw GEFS (smoothed) | -$65 [-$127, -$8] | -$919 |
 | Calibrated NOAA | $17 [-$29, $63] | -$824 |
+| ML random forest | $59 [$24, $89] | -$344 |
 | Kalshi noon | $61 [$30, $94] | -$410 |
 
 | Difference in daily PnL | Mean [95% CI] | Share of replicates above 0 |
@@ -39,6 +43,8 @@ Above, each seed has its own settings. Here only the opening forecast differs.
 | Calibrated NOAA minus Climatology | $134 [$65, $196] | 1.000 |
 | Calibrated NOAA minus Raw GEFS (smoothed) | $82 [$28, $137] | 1.000 |
 | Calibrated NOAA minus Kalshi noon | -$44 [-$83, -$8] | 0.008 |
+| ML random forest minus Calibrated NOAA | $42 [$6, $83] | 0.984 |
+| ML random forest minus Kalshi noon | -$2 [-$27, $20] | 0.425 |
 
 ## Sensitivity: test days, quoting to market close
 
@@ -48,6 +54,7 @@ Above, each seed has its own settings. Here only the opening forecast differs.
 | Climatology | $7 [$4, $9] | -$23 |
 | Raw GEFS (smoothed) | $21 [$13, $29] | -$91 |
 | Calibrated NOAA | $61 [$7, $114] | -$605 |
+| ML random forest | $104 [$62, $143] | -$393 |
 | Kalshi noon | $105 [$65, $145] | -$398 |
 
 ## Effect of b (Calibrated NOAA seed, selected fee)
@@ -68,10 +75,10 @@ Closing Brier and tracking error are price responsiveness: tracking error is the
 
 Informed traders hold noisy beliefs around the later Kalshi midpoint; the rest trade for reasons unrelated to the outcome. Every seed uses b 300 and fee 0.01, so only the opening forecast differs. This is a what-if, not an estimate of real flow.
 
-| Informed share | Uniform | Climatology | Raw GEFS (smoothed) | Calibrated NOAA | Kalshi noon |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 0% | $449 | $325 | $350 | $384 | $396 |
-| 10% | -$112 | -$213 | -$142 | -$32 | $39 |
-| 25% | -$132 | -$237 | -$161 | -$49 | $20 |
-| 50% | -$139 | -$246 | -$169 | -$56 | $12 |
-| 75% | -$158 | -$262 | -$186 | -$71 | -$4 |
+| Informed share | Uniform | Climatology | Raw GEFS (smoothed) | Calibrated NOAA | ML random forest | Kalshi noon |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0% | $449 | $325 | $350 | $384 | $418 | $396 |
+| 10% | -$112 | -$213 | -$142 | -$32 | $20 | $39 |
+| 25% | -$132 | -$237 | -$161 | -$49 | $2 | $20 |
+| 50% | -$139 | -$246 | -$169 | -$56 | -$6 | $12 |
+| 75% | -$158 | -$262 | -$186 | -$71 | -$22 | -$4 |
