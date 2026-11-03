@@ -1,159 +1,52 @@
-# NYC Central Park weather-market pilot
+# Domain-specialised market making for Kalshi weather markets
 
-This project pairs settled Kalshi daily-high contracts with archived NOAA GEFS ensemble forecasts for Central Park. The original pilot sample was **July 20–26, 2026** (seven days, a pipeline check only); the collector now defaults to the one-year window in `config.py`.
+ECE 473 project, track 1a. We build a market maker specialised for Kalshi's daily high-temperature contracts and test it on real order flow against general-purpose and forecast-only baselines.
 
-For the first two weeks' task-by-task mapping and the complete workflow, see [MILESTONE1_COVERAGE.md](MILESTONE1_COVERAGE.md). Run `python3 milestone1.py` after collection to add historical station temperatures, a seasonal climatology baseline, and Brier/log-loss/calibration evaluation.
+**Thesis.** A weather market maker cannot win by out-forecasting the crowd: public forecasts are already in the price before they are published. Its domain advantage comes from building in how weather information *arrives and settles*. The daily high is a running maximum of one named station, so live observations rule outcomes out permanently. A maker that reprices on the live station maximum improves test-day PnL in all six cities tested, with a bounded extra worst-case loss; generic levers (more liquidity, confidence scaling, throttling) do not.
 
-The dedicated [week 2 baseline guide](CLIMATOLOGY_BASELINE.md) documents the historical records and model. Run `python3 climatology.py` to produce the 1991–2020 training set, post-training records, coverage checks, and seasonal summaries. For a probability query, use `python3 climatology.py --date 2026-07-20 --lower 79 --upper 80`.
+**Read [docs/paper.md](docs/paper.md)** for the full write-up: the domain, data and backtest design, forecasting results, how the market behaves, the market-maker ladder, the loss bound and limitations.
 
-## Full-window run (Milestone 1, week 3)
+## Headline results
 
-`config.py` sets the study window (Aug 14, 2025 – Aug 13, 2026, every contract on NWS/Central Park rules) and the date split: train Aug 14, 2025 – Apr 30, 2026, test May 1 – Aug 13, 2026. With no arguments, `collect_nyc.py` now collects that whole window. See [DATA_NOTES.md](DATA_NOTES.md) for what the data forced and the plan changes.
+| Question | Answer | Source |
+|---|---|---|
+| Does a domain forecast beat generic ones? | Yes: Brier 0.113 vs 0.123 (calibrated NOAA), 0.145 (raw GEFS), 0.169 (climatology) | `data/results/ml/ml_tables.md` |
+| Does it beat the market? | No: Kalshi 0.109; the forecast adds a little in a blend | same |
+| Is public forecast information priced in? | Mostly before release; Kalshi removes 27% of the public forecast's error at the noon cutoff, in all 15 cities | `data/results/efficiency/efficiency_tables.md` |
+| How fast are station observations priced? | Mostly within minutes; 65–91% of ruled-out bins dead within 15 minutes | `data/results/realtime/realtime_tables.md` |
+| What makes a better market maker? | Live running-maximum truncation: positive in 6/6 cities, pooled significant | `data/results/adaptive_mm/adaptive_mm_tables.md` |
+| Does liquidity make prices smarter? | No: it tightens spreads only | `data/results/efficiency/efficiency_tables.md` |
 
-```bash
-.venv/bin/python collect_nyc.py --workers 32   # resumable; finished days are saved in data/days/
-.venv/bin/python milestone1.py                 # climatology for every row; point scores on test days
-.venv/bin/python evaluate.py                   # test-only scores with day-bootstrap CIs -> data/results/
-.venv/bin/python plot_results.py               # train vs test tables + predicted-vs-actual figures
-python3 inspect_nyc.py                         # offline consistency checks
-.venv/bin/python -m unittest test_milestone1.py test_climatology.py test_evaluation.py test_plot_results.py
+## Layout
+
 ```
-
-- **Skipped days:** a day that fails a strict check (not six settled bins, rules not naming Central Park/NWS, a market from another event, missing or late GEFS files, inconsistent outcome) is written to `data/skipped_days.csv` with a reason instead of stopping the run. Network failures are not cached, so rerunning retries them.
-- **Blank settlement highs:** some 2025 events settled every bin but have an empty `expiration_value`. For those days `kalshi_settlement_high_f` is the GHCN Central Park high, used only if it falls in Kalshi's winning bin; `settlement_high_source` says `ghcn_fallback` instead of `kalshi`.
-- **`evaluate.py`:** scores the raw ensemble, climatology, persistence (the high from two days before plus 1991–2020 two-day changes; yesterday's high is not final at the noon cutoff) and the market midpoint on identical test-day rows. 95% intervals resample whole test days 1,000 times; paired differences (ensemble − climatology, ensemble − market, ensemble − persistence) get their own intervals. Outputs: `data/results/results_table.csv`, `paired_differences.csv`, `results_tables.md`, `scored_rows.csv`, `summary.json`.
-- **`plot_results.py`:** reads those scored rows (does not recollect data). Compares train vs test and month-by-month Brier, and plots predicted probabilities against actual YES/NO. Outputs: `data/results/date_comparison.md`, `train_vs_test.csv`, `daily_scores.csv`, `monthly_scores.csv`, `reliability_by_split.csv`, and PNGs in `data/results/figures/`.
-
-## Market-making backtest (Milestone 2)
-
-Kalshi is the market benchmark throughout; Polymarket is not used because its NYC contracts settle on LaGuardia, not Central Park. Run after the steps above:
-
-```bash
-.venv/bin/python collect_trades.py --workers 2  # resumable; all taker trades and hourly candles -> data/flow/
-.venv/bin/python calibrate.py                   # picks the NOAA correction on train days -> data/noaa_calibrated.csv
-.venv/bin/python calibrate_traders.py           # fits trader settings on train days -> data/trader_calibration.json
-.venv/bin/python compare_forecasts.py           # NOAA vs Kalshi, disagreement tests -> data/results/forecast_comparison/
-.venv/bin/python backtest.py                    # LMSR replay, b analysis, synthetic traders -> data/results/backtest/
-.venv/bin/python plot_backtest.py               # figures -> data/results/backtest/figures/
-.venv/bin/python -m unittest test_lmsr.py test_backtest.py
+config.py, cities.py      study windows and train/test splits; the 15-city registry
+common.py                 paths, time zones, file helpers
+run_pipeline.py           runs every stage in order (python run_pipeline.py --list)
+collect/                  downloads: Kalshi, GEFS, ECMWF, NWS MOS, ASOS (hourly and 1-minute)
+forecast/                 climatology, persistence, calibrated NOAA, ML model, public forecast
+market/                   LMSR, replay backtests, the domain market-maker ladder, synthetic traders
+analysis/                 forecast scoring, trader behaviour, information efficiency, latency
+tests/                    unit and leakage tests
+docs/                     paper.md, data notes, per-milestone pipeline notes
+data/                     collected data (raw caches gitignored) and data/results/ outputs
 ```
-
-- **`calibrate.py`:** a rolling Gaussian correction of GEFS, fit on verified days through D-2. A fixed correction fails because the ensemble's bias changes sign by season.
-- **`backtest.py`:** each real taker trade after the noon cutoff becomes a limit order at the price that trader paid, and fills against the LMSR only while the LMSR is at least as good. Quoting halts at noon on the target day; quoting to close is a sensitivity run. b and the fee are selected on train days only. Results are a counterfactual estimate, not realized PnL.
-- **`traders.py`:** a what-if population of noise and informed traders. Informed beliefs center on the later Kalshi midpoint, and the informed share is swept because the data cannot identify it.
-- `data/raw/kalshi_flow/` (about 800 MB) is gitignored; `data/flow/` holds the compressed tables.
-
-## Multi-source ML forecast and trader analysis (Milestone 3)
-
-Replaces the single-source NOAA forecast with a model that combines several forecast systems and live observations, then studies how Kalshi traders behave relative to it. Run after the Milestone 2 steps (`ml_model.py` must run before `backtest.py`, which now has an ML seed):
-
-```bash
-.venv/bin/python collect_features.py --workers 8  # ECMWF, NWS MOS, ASOS -> data/features/daily_features.csv (resumable)
-.venv/bin/python ml_model.py --ablation           # walk-forward random forest -> data/ml_forecasts.csv, data/ml_daily.csv
-.venv/bin/python ml_compare.py                    # ML vs Kalshi/NOAA, regimes, trading, importance -> data/results/ml/
-.venv/bin/python trader_analysis.py               # trader behaviour -> data/results/traders/
-.venv/bin/python backtest.py && .venv/bin/python plot_backtest.py
-.venv/bin/python -m unittest test_ml_model.py
-```
-
-- **Sources (all free, no keys):** ECMWF IFS HRES 00 UTC open data (Google Cloud mirror, byte-range GRIB); NWS MOS from the Iowa Environmental Mesonet archive: NBM (`NBS`, including its own max-temperature spread), GFS (`MAV`) and NAM (`MET`); ASOS observations at Central Park, LaGuardia, JFK and Newark. Every input is public by the noon cutoff on D-1: MOS runs must be at least 3 (NBM) or 6 (GFS, NAM) hours old, and observations stop at the cutoff.
-- **History:** training starts March 2024 (the first 0.25-degree ECMWF open data), 17 months before the Kalshi window, using the GHCN Central Park high as the target. The same model therefore has roughly 2.5 times as many training days as the NOAA correction.
-- **`ml_model.py`:** a random forest predicts the residual of the high from the mean of the four point forecasts, refit weekly on days up to D-2; a second fit gives each day's spread. The plain forecast average is kept as a reference. `--ablation` refits without each feature group (slow). See DATA_NOTES.md for why the forest was chosen.
-- **`ml_compare.py`:** identical-row Brier/log loss with day-bootstrap intervals, point-forecast MAE including the high implied by Kalshi prices, where ML wins or loses by weather regime, disagreement signal tests, a fee-aware trading backtest at the quoted bid/ask, and grouped permutation importance.
-- **`trader_analysis.py`:** volume and price moves by hour against model release times, Kalshi accuracy by lead time, and taker returns by price (favorite-longshot), size, timing and agreement with the ML forecast.
-- `data/raw/{ecmwf,mos,asos}/` are gitignored caches; `data/features/` is committed.
-
-## Information efficiency across 15 Kalshi cities
-
-Asks how much public weather information the price already holds, how fast new information reaches it, and whether liquidity matters. Window: Apr 1 – Aug 13, 2026, the period when every city settled on the NWS Climatological Report.
-
-```bash
-.venv/bin/python collect_cities.py   # Kalshi hourly quotes, NBM and GFS MOS runs, ASOS obs -> data/cities/<code>/ (resumable, ~1 h)
-.venv/bin/python efficiency.py       # -> data/results/efficiency/efficiency_tables.md and figures
-```
-
-- **`cities.py`:** the 15 series and their settlement stations, taken from the contracts' own rules. `collect_cities.py` checks each mapping: the settled high is within 1°F of the station's ASOS maximum on 76–96% of days.
-- **Public forecast:** the mean of the latest NBM and GFS MOS max forecasts, bias-corrected with days through D-2. NBM and GFS MOS are archived for every run and every station; ECMWF and GEFS GRIB per city would not be. In NYC this two-source forecast scores Brier 0.119, against 0.116 for the ML forest and 0.111 for Kalshi, so the ML model is not needed here.
-- **`efficiency.py`:** compares accuracy by hour for the public forecast, the public forecast plus observations so far, and Kalshi.
-
-## Real-time latency and an information-adaptive market maker
-
-Public forecasts are mostly priced before they are released, so this part asks which clock the market runs on (minute-level station data) and whether a market maker can use that to set its liquidity. Six cities from busiest to thinnest: LAX, NYC, CHI, AUS, MSP, DCA.
-
-```bash
-.venv/bin/python collect_realtime.py   # 1-minute ASOS temperatures and every Kalshi trade -> data/raw/realtime/ (gitignored, ~1 h)
-.venv/bin/python realtime.py           # knock-out latency -> data/results/realtime/
-.venv/bin/python adaptive_mm.py        # adaptive LMSR makers replayed on real flow -> data/results/adaptive_mm/
-```
-
-- **`realtime.py`:** a knock-out is the minute the 1-minute running maximum passes a bin's upper edge, for a bin that settled NO. The lag is the time until that bin's price stays at 3¢ or less. Two crossing definitions bracket the truth, because the 1-minute series often reads 1°F above the official high. The script also measures stale trades after the crossing, and whether prices wait for the hourly report.
-- **`adaptive_mm.py`:** five LMSR makers opened with the public forecast: fixed b halted at noon (the Milestone 2 design), fixed b to close, b scaled by forecast confidence, plus live price tilting from the station's running maximum (5-minute feed delay), plus a liquidity cut near bin edges and after hourly reports. Settings are chosen on Apr–May and tested on Jun–Aug 13. It runs event studies on NBM releases, GFS MOS releases and hourly observations (price path from 6 h before to 8 h after, against the warranted move), and relates the results to volume and spread across and within cities. Caveats are listed at the end of the generated report.
 
 ## Run
 
 ```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python collect_nyc.py
+python -m pip install -r requirements.txt
+python run_pipeline.py                 # every analysis stage from the data on disk
+python run_pipeline.py --collect       # re-download everything first (hours; resumable)
+python run_pipeline.py --only market.makers
+python -m unittest discover -s tests -t .
 ```
 
-For a one-day check, append `--start 2026-07-20 --days 1`. Downloads are cached and reruns reuse them. `--start YYYY-MM-DD --days N` changes the period, but the collector skips (and logs) days with contracts whose rules do not explicitly name Central Park and the NWS. No Kalshi login or AWS account is needed.
+Each stage is also a module you can run by hand, for example `python -m analysis.efficiency`. No API keys are needed. Large raw caches (`data/raw/`) are gitignored and rebuilt by `--collect`.
 
-Git includes the extracted datasets, Kalshi responses, and NOAA source manifests. Large raw GEFS messages, the downloadable GHCN station/history files, and the virtual environment are ignored. A fresh clone can recreate those caches by running the workflow in `MILESTONE1_COVERAGE.md`.
+## More detail
 
-## Outputs
-
-| File | Contents |
-| --- | --- |
-| `data/matched.csv` | One row per contract: bin, ensemble probability, previous-day market midpoint, result |
-| `data/markets.csv` | Contract metadata, rules, settlement high, bid/ask and timestamp |
-| `data/ensemble_temperatures.csv` | 31 members × 10 forecast times × number of days; nearest model grid point |
-| `data/ensemble_daily_maxima.csv` | Approximate daily high for each member |
-| `data/validation.json` | Completeness checks, descriptive Brier scores, limitations |
-| `data/daily_summary.csv` | One row per day: settlement high, ensemble mean/range, winning bin |
-| `data/raw/` | Original API responses and source URLs; cached GRIB temperature messages and retrieval metadata |
-| `data/historical_tmax.csv` | Quality-screened NOAA GHCN Central Park daily highs from 1991 onward |
-| `data/matched_with_climatology.csv` | Existing matched data plus seasonal climatology probabilities |
-| `data/climatology_training_summary.csv` | Historical sample counts and date bounds per target day |
-| `data/evaluation.json` | Ensemble, climatology, and market scores on identical contract rows |
-| `data/calibration.csv` | Reliability-bin predictions, outcomes, and counts for all three forecasts |
-| `data/observation_crosscheck.csv` | Independent GHCN daily-high comparison against Kalshi's settlement high |
-
-## Matching choices
-
-- **Station:** KNYC, New York City/Central Park. Latitude and longitude are retrieved from the NWS station API and saved in `data/raw/station_KNYC.json`.
-- **Series:** `KXHIGHNY`; individual contracts come from the historical and live market endpoints, with pagination and deduplication.
-- **Prediction time:** noon in `America/New_York` on the previous day (16:00 UTC for this July sample).
-- **Market probability proxy:** YES bid/ask midpoint at the latest hourly candle ending no later than prediction time, using at most two hours of candle history. Its age is visible in the timestamp column. It is not an executable trading price. Missing quotes remain missing.
-- **Model:** GEFS, previous-day 06 UTC run, 0.25-degree `pgrb2sp25` product. Control plus 30 perturbations are equally weighted. The collector fetches only the TMP/2 m GRIB byte range, not the entire global multi-variable file. Source-object modification times must precede the prediction cutoff.
-- **Spatial extraction:** geometric nearest grid point, with grid coordinates and distance saved. This is a forecast for a grid cell near Central Park, not an exact station forecast. No elevation, coastal, or urban bias correction is applied.
-- **Climate day:** midnight to midnight local standard time, i.e. 05:00–05:00 UTC year-round for NYC. In July this corresponds to 01:00–01:00 civil time.
-- **Daily high approximation:** three-hourly temperatures at 06, 09, 12, 15, 18, 21, 00 and 03 UTC, plus linearly interpolated values at the bounding 05 UTC times. Take the maximum separately for each member. This can miss between-sample maxima. The true continuous model maximum is not recovered.
-- **Bin probabilities:** convert Kelvin to Fahrenheit; round each member's approximate high to the nearest whole degree, with half degrees rounded up; count members satisfying each contract's strike condition. This rounding is a transparent modeling assumption and should be revisited during calibration.
-- **Outcome:** the contract's resolved YES/NO result. The high temperature is Kalshi's `expiration_value`, which is checked against the bin/result for consistency. Original NWS reports are not independently downloaded, so this column is named `kalshi_settlement_high_f` rather than independently observed temperature.
-
-## Important source change
-
-On checking the API on October 24, 2026, the current series and recent contracts named **The Weather Company**. The July 2026 contracts used here explicitly name **Central Park and the NWS Climatological Report (Daily)**. Do not apply today's series settlement source retroactively to older contracts, or assume this collector applies to newer contracts without reviewing their rules and reporting windows.
-
-## Validation and next work
-
-After collecting, run `python3 inspect_nyc.py` for an independent check of the CSV dimensions, bin partitions, outcomes, forecast availability timestamps, and quote cutoff times. This also creates `data/daily_summary.csv`. It uses only Python's standard library and makes no network requests. Exact packages used for the initial extraction are recorded in `requirements-lock.txt`.
-
-The collector requires six complete contracts per day, 31 complete ensemble members, correct GRIB initialization/lead/variable metadata, dollar-denominated quotes, outcomes consistent with the reported settlement temperature, and bin member counts summing to 31. It aborts on incomplete inputs instead of silently changing ensemble denominators.
-
-Raw empirical probabilities can be zero. Before computing log loss, document a probability-smoothing convention. Fit station bias, spread adjustments, and any smoothing on an earlier training period; evaluate on later dates. Use the same rows for model/market comparisons when quotes are missing. The Brier scores in the validation file are binary-contract averages, not sums over the six-outcome distribution.
-
-Before claiming market-making profitability, obtain an execution model for spreads, fees, fills and inventory. Historical candle midpoints alone cannot establish realizable PnL.
-
-## Sources
-
-- [Kalshi market discovery and Central Park series example](https://docs.kalshi.com/getting_started/quick_start_market_data)
-- [Kalshi historical-data routing](https://docs.kalshi.com/getting_started/historical_data)
-- [Historical market endpoint](https://docs.kalshi.com/api-reference/historical/get-historical-markets)
-- [Historical candlestick endpoint](https://docs.kalshi.com/api-reference/historical/get-historical-market-candlesticks)
-- [NOAA GEFS public archive](https://registry.opendata.aws/noaa-gefs/)
-- [NWS Central Park station metadata](https://api.weather.gov/stations/KNYC)
-- [Kalshi weather settlement and standard-time explanation](https://help.kalshi.com/en/articles/13823837-weather-markets)
-
-Per-contract original rules are preserved in the raw JSON and CSV outputs, and take precedence over general explanatory pages.
+- [docs/paper.md](docs/paper.md): the paper.
+- [docs/DATA_NOTES.md](docs/DATA_NOTES.md): data decisions, the settlement-source change, model choice.
+- [docs/PIPELINE_NOTES.md](docs/PIPELINE_NOTES.md): per-milestone collection and matching detail.
+- [docs/CLIMATOLOGY_BASELINE.md](docs/CLIMATOLOGY_BASELINE.md), [docs/MILESTONE1_COVERAGE.md](docs/MILESTONE1_COVERAGE.md): early milestone documents.

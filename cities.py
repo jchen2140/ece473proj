@@ -2,7 +2,7 @@
 
 Stations come from the contracts' own rules: before the switch to The Weather Company (Aug 14,
 2026) they name the NWS Climatological Report, and after it they name the CLI product (CLIMDW,
-CLIDFW, ...). collect_cities.py checks each mapping against that station's ASOS observations.
+CLIDFW, ...). collect/city_markets.py checks each mapping against that station's ASOS observations.
 The window is the stretch every city traded under NWS settlement.
 """
 import datetime as dt
