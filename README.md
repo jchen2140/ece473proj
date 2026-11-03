@@ -74,7 +74,20 @@ Asks how much public weather information the price already holds, how fast new i
 
 - **`cities.py`:** the 15 series and their settlement stations, taken from the contracts' own rules. `collect_cities.py` checks each mapping: the settled high is within 1°F of the station's ASOS maximum on 76–96% of days.
 - **Public forecast:** the mean of the latest NBM and GFS MOS max forecasts, bias-corrected with days through D-2. NBM and GFS MOS are archived for every run and every station; ECMWF and GEFS GRIB per city would not be. In NYC this two-source forecast scores Brier 0.119, against 0.116 for the ML forest and 0.111 for Kalshi, so the ML model is not needed here.
-- **`efficiency.py`:** compares accuracy by hour for the public forecast, the public forecast plus observations so far, and Kalshi. It runs event studies on NBM releases, GFS MOS releases and hourly observations (price path from 6 h before to 8 h after, against the warranted move), and relates the results to volume and spread across and within cities. Caveats are listed at the end of the generated report.
+- **`efficiency.py`:** compares accuracy by hour for the public forecast, the public forecast plus observations so far, and Kalshi.
+
+## Real-time latency and an information-adaptive market maker
+
+Public forecasts are mostly priced before they are released, so this part asks which clock the market runs on (minute-level station data) and whether a market maker can use that to set its liquidity. Six cities from busiest to thinnest: LAX, NYC, CHI, AUS, MSP, DCA.
+
+```bash
+.venv/bin/python collect_realtime.py   # 1-minute ASOS temperatures and every Kalshi trade -> data/raw/realtime/ (gitignored, ~1 h)
+.venv/bin/python realtime.py           # knock-out latency -> data/results/realtime/
+.venv/bin/python adaptive_mm.py        # adaptive LMSR makers replayed on real flow -> data/results/adaptive_mm/
+```
+
+- **`realtime.py`:** a knock-out is the minute the 1-minute running maximum passes a bin's upper edge, for a bin that settled NO. The lag is the time until that bin's price stays at 3¢ or less. Two crossing definitions bracket the truth, because the 1-minute series often reads 1°F above the official high. The script also measures stale trades after the crossing, and whether prices wait for the hourly report.
+- **`adaptive_mm.py`:** five LMSR makers opened with the public forecast: fixed b halted at noon (the Milestone 2 design), fixed b to close, b scaled by forecast confidence, plus live price tilting from the station's running maximum (5-minute feed delay), plus a liquidity cut near bin edges and after hourly reports. Settings are chosen on Apr–May and tested on Jun–Aug 13. It runs event studies on NBM releases, GFS MOS releases and hourly observations (price path from 6 h before to 8 h after, against the warranted move), and relates the results to volume and spread across and within cities. Caveats are listed at the end of the generated report.
 
 ## Run
 
