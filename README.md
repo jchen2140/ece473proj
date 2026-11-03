@@ -2,7 +2,7 @@
 
 ECE 473 project, track 1a. We build a market maker specialised for Kalshi's daily high-temperature contracts and test it on real order flow against general-purpose and forecast-only baselines.
 
-**Thesis.** A weather market maker cannot win by out-forecasting the crowd: public forecasts are already in the price before they are published. Its domain advantage comes from building in how weather information *arrives and settles*. The daily high is a running maximum of one named station, so live observations rule outcomes out permanently. A maker that reprices on the live station maximum improves test-day PnL in all six cities tested, with a bounded extra worst-case loss; generic levers (more liquidity, confidence scaling, throttling) do not.
+**Thesis.** A weather market maker cannot win by out-forecasting the crowd: public forecasts are already in the price before they are published. Its domain advantage comes from building in how weather information *arrives and settles*. The daily high is a running maximum of one named station, so live observations rule outcomes out permanently. A maker that reprices on the live station maximum improves test-day PnL in all six cities tested, with a bounded extra worst-case loss; generic levers (confidence scaling, throttling, halting at noon) do not.
 
 **Read [docs/paper.md](docs/paper.md)** for the full write-up: the domain, data and backtest design, forecasting results, how the market behaves, the market-maker ladder, the loss bound and limitations.
 
@@ -14,7 +14,8 @@ ECE 473 project, track 1a. We build a market maker specialised for Kalshi's dail
 | Does it beat the market? | No: Kalshi 0.109; the forecast adds a little in a blend | same |
 | Is public forecast information priced in? | Mostly before release; Kalshi removes 27% of the public forecast's error at the noon cutoff, in all 15 cities | `data/results/efficiency/efficiency_tables.md` |
 | How fast are station observations priced? | Mostly within minutes; 65–91% of ruled-out bins dead within 15 minutes | `data/results/realtime/realtime_tables.md` |
-| What makes a better market maker? | Live running-maximum truncation: positive in 6/6 cities, pooled significant | `data/results/adaptive_mm/adaptive_mm_tables.md` |
+| What makes a better market maker? | A weather-forecast prior and live running-maximum truncation: each positive in 6/6 cities, pooled significant; truncation's extra tail risk stays within a proven bound | `data/results/adaptive_mm/adaptive_mm_tables.md` |
+| What doesn't? | Confidence-scaled liquidity, throttling around information events, halting at noon | same |
 | Does liquidity make prices smarter? | No: it tightens spreads only | `data/results/efficiency/efficiency_tables.md` |
 
 ## Layout

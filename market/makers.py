@@ -111,7 +111,7 @@ def day_inputs(code):
         if kalshi is None:
             continue
         row = cutoff_rows.loc[day]
-        _, public = public.public_brier(row, info)
+        _, forecast_prior = public.public_brier(row, info)
         flow = []
         for i, ticker in enumerate(info['tickers']):
             t = by_ticker.get(ticker)
@@ -128,7 +128,7 @@ def day_inputs(code):
         temps = minute[(minute['ts'] >= start) & (minute['ts'] < start + 86400)]
         n = len(info['tickers'])
         out.append({'day': day, 'split': 'train' if dt.date.fromisoformat(day) <= TRAIN_END else 'test',
-                    'priors': {'uniform': np.full(n, 1 / n), 'public': np.asarray(public),
+                    'priors': {'uniform': np.full(n, 1 / n), 'public': np.asarray(forecast_prior),
                                'kalshi': np.asarray(forecasts.floor_probabilities(list(kalshi['probs'])))},
                     'sd': float(row['error_sd']) if pd.notna(row['error_sd']) else 2.5,
                     'lows': info['lows'], 'highs': info['highs'], 'winner': info['winner'], 'start': start, 'flow': flow,
@@ -228,8 +228,11 @@ def replay(day, maker, b0, fee, kappa, sd_ref):
     if fills:
         ts = np.array([f[0] for f in fills])
         pnl = np.array([f[1] for f in fills])
-        k = np.searchsorted(events, ts, side='right')
-        recent = (k > 0) & (ts - events[np.maximum(k - 1, 0)] <= INFORMED_WINDOW)
+        if len(events):
+            k = np.searchsorted(events, ts, side='right')
+            recent = (k > 0) & (ts - events[np.maximum(k - 1, 0)] <= INFORMED_WINDOW)
+        else:
+            recent = np.zeros(len(ts), dtype=bool)
         metrics['event_time_pnl'] = float(pnl[recent].sum())
         metrics['other_pnl'] = float(pnl[~recent].sum())
     else:
