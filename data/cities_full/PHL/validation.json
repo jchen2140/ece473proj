@@ -1,0 +1,12 @@
+{
+  "city": "PHL",
+  "series": "KXHIGHPHIL",
+  "days": 365,
+  "dropped_days": {},
+  "candles": 81551,
+  "asos_check": {
+    "days": 302,
+    "within_1f": 0.9139072847682119,
+    "mean_gap_f": 0.6821192052980133
+  }
+}

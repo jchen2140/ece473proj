@@ -8,7 +8,7 @@ ECE 473 project, track 1a (domain-specialised market makers). Every number here 
 
 ## Abstract
 
-We build a domain-specialised market maker for Kalshi's daily high-temperature markets and test it against general-purpose and forecast-only baselines on real order flow. A domain forecasting model (a walk-forward random forest over ECMWF, the National Blend of Models, NWS MOS and station observations) beats climatology, the raw GEFS ensemble and a calibrated GEFS model. It does not beat the Kalshi market itself (test Brier 0.113 vs 0.109), and an event study across 15 cities shows why: public forecast information is mostly in the price *before* it is published, and the market removes a further 27% of the public forecast's squared error at the noon cutoff. The forecast's value to a market maker therefore comes from somewhere else. **Our thesis is that a weather market maker's domain advantage comes from building in how weather information arrives and settles, not from out-forecasting the crowd.** The daily high is a running maximum of one named station, so live observations rule outcomes out permanently. On real order flow in six cities, both domain ideas pay in every city: a weather-forecast prior instead of a uniform one, and truncating prices with the live station maximum. Truncation adds as much on top of the crowd's own prices as on top of the forecast. It costs a bounded amount of extra worst-case loss, which we prove and observe. Generic levers (confidence-scaled liquidity, throttling around information events, halting at noon) do not help. Along the way we document how the market behaves: who trades and when, how fast it prices forecasts and observations, and why liquidity buys tighter spreads but not more informative prices.
+We build a domain-specialised market maker for Kalshi's daily high-temperature markets and test it against general-purpose and forecast-only baselines on real order flow. A domain forecasting model (a walk-forward random forest over ECMWF, the National Blend of Models, NWS MOS and station observations) beats climatology, the raw GEFS ensemble and a calibrated GEFS model. It does not beat the Kalshi market itself (test Brier 0.113 vs 0.109), and an event study across 15 cities shows why: public forecast information is mostly in the price *before* it is published, and the market removes a further 27% of the public forecast's squared error at the noon cutoff. The forecast's value to a market maker therefore comes from somewhere else. **Our thesis is that a weather market maker's domain advantage comes from building in how weather information arrives and settles, not from out-forecasting the crowd.** The daily high is a running maximum of one named station, so live observations rule outcomes out permanently. On real order flow in six cities, both domain ideas pay in every city: a weather-forecast prior instead of a uniform one, and truncating prices with the live station maximum. Truncation adds as much on top of the crowd's own prices as on top of the forecast. It costs a bounded amount of extra worst-case loss, which we prove and observe. Generic levers (confidence-scaled liquidity, throttling around information events, halting at noon) do not help. A full-year walk-forward replay in seven cities (1,990 test city-days, settings chosen monthly from earlier days only) confirms both domain ideas. It also shows where truncation's tail risk comes from: lone one-minute sensor spikes. A pre-registered 5-minute median filter, tested on six held-out cities, keeps truncation's gain and brings its worst days back to the forecast-only maker's. Finally, the maker's expected capital is b times its prior's log loss, so at equal capital the domain makers earn more. Along the way we document how the market behaves: who trades and when, how fast it prices forecasts and observations, and why liquidity buys tighter spreads but not more informative prices.
 
 ---
 
@@ -27,7 +27,8 @@ We study Kalshi's `KXHIGH*` markets: each day, six mutually exclusive contracts 
 - A leakage-controlled forecasting pipeline and a domain model that beats every generic and single-source baseline (Section 4).
 - An empirical account of how the market works: trader behaviour, information efficiency across 15 cities, and minute-level latency to station data across 6 (Section 5).
 - A domain market maker whose key mechanism, live running-maximum truncation, improves PnL in all six cities tested, with a worst-case loss bound (Section 6).
-- An honest ledger of what did not work (Section 6.4).
+- A full-year, seven-city walk-forward test of the ladder, a pre-registered spike filter that removes truncation's tail losses, and a capital analysis of the liquidity parameter b (Sections 6.6–6.8).
+- An honest ledger of what did not work (Section 6.5).
 
 ---
 
@@ -239,7 +240,114 @@ and pᵏ are the maker's prices just before tilt k.
 - **Confidence-scaled liquidity** (more liquidity on days the forecast is confident) lost money pooled across cities.
 - **A liquidity throttle** (cutting *b* near bin edges and after hourly reports) lost money with fixed settings in 5 of 6 cities and overfit when tuned: two months of training chose b = 1000 in LA and NYC, giving test worst days of −$2,064 and −$2,831.
 - **Halting at noon** (the Milestone 2 design) is not better than quoting to the close once the maker has a forecast prior (pooled −0.08).
+- **A sensor-error margin before truncating** (Jessie; `docs/CONSERVATIVE_TRUNCATION.md`, `docs/CROSS_CITY_REPLICATION.md`). This rule subtracts a training-estimated margin from the running maximum. On the NYC summer test, a 1°F margin removed the July 31 loss and improved the worst days, at a cost in average PnL. Fit over a full year, the same frozen 99th-percentile rule picks margins of 5–17°F that switch truncation off (Section 6.6). The spike filter (Section 6.7) gets the tail benefit without giving up the gain.
 - **Trading against Kalshi on forecast disagreement** at the quoted bid and ask, after fees, earns nothing reliable (Section 4; `analysis.ml_compare`).
+
+### 6.6 A full year in seven cities, walk-forward
+
+*Module: `market.full_year`. Results: `data/results/full_year/full_year_tables.md`; design and detail in `docs/FULL_YEAR_STUDY.md`.*
+
+Section 6.3 tested 2½ summer months. We re-ran the ladder over the whole year, Aug 14, 2025 – Aug 13, 2026, in seven cities: New York, Los Angeles, Chicago, Miami, Austin, Denver and Philadelphia. It uses every taker trade (about 10.6M outside NYC) and the 1-minute station record.
+
+How the replay works:
+- Each test month, every maker's b and fee are chosen from earlier days only. Testing runs October–August, 1,990 city-days.
+- The open-ended bins keep their true infinite edges. A placeholder edge would let truncation write off a top bin that then wins.
+- Jessie's conservative truncation (Section 6.5) runs with its frozen rule, refit monthly.
+
+Same settings for every maker; pooled in city sd units:
+
+| Idea | Cities positive | Pooled [95% CI] |
+|---|---:|---|
+| Weather forecast prior | 6/7 | +0.16 [+0.11, +0.20] |
+| Live running-max truncation | 7/7 | +0.11 [+0.06, +0.15] |
+| Truncation on the Kalshi prior | 7/7 | +0.11 [+0.06, +0.15] |
+| Truncation on spike-filtered readings | 7/7 | **+0.40 [+0.36, +0.45]** |
+| Conservative vs plain truncation | 0/7 | −0.10 [−0.15, −0.06] |
+| Halting at noon | 1/7 | −0.16 [−0.21, −0.12] |
+| Confidence-scaled b | 2/7 | −0.11 [−0.15, −0.07] |
+
+- **The two domain ideas survive a stricter test.**
+  - The forecast prior's gain is seasonal: large in spring and summer (+0.21, +0.34), about zero in fall and winter.
+  - Truncation helps in all seven cities.
+- **The generic levers still lose**, most of all halting at noon in winter (−0.41).
+- **With its own walk-forward settings, the best domain maker earns:**
+
+  | City | $/day |
+  |---|---:|
+  | NYC | $183 |
+  | LA | $122 |
+  | Miami | $101 |
+  | Chicago | $56 |
+  | Denver | $31 |
+  | Philadelphia | $20 |
+  | Austin | $10 |
+
+  As in Section 6.3, liquidity decides the level.
+- **The frozen sensor-margin rule fails over a year.**
+  - A 99th percentile over a year of days is set by single bad minutes. The fitted margins are:
+    - NYC 5–8°F.
+    - Miami 4–7°F.
+    - Philadelphia up to 17°F.
+    - Los Angeles 52°F one month, from one corrupt reading.
+  - A margin that large turns truncation off. Conservative truncation lost to plain truncation in every city.
+
+### 6.7 Where truncation's tail risk comes from: a pre-registered spike filter
+
+Every large NYC truncation loss was a day when **one** 1-minute reading exceeded the official high and the rest of the record did not. For example, on July 31 the 1-minute maximum was 87°F, the official high 85°F and the 5-minute median 84°F. The station's error is a lone spike, not a steady offset, so a margin is the wrong fix.
+
+- **The rule:** truncate on the running maximum of a trailing 5-minute rolling median of the 1-minute readings.
+- **The window** matches the 5-minute public feed and was not tuned.
+- **Freezing:** we froze the rule (`data/results/full_year/spike_filter_protocol.json`) after looking at NYC only, before any 1-minute data for the other six cities existed on disk.
+
+Results on the six held-out cities, same settings:
+
+| Comparison | Cities positive | Mean $/day [95% CI] | Pooled [95% CI] |
+|---|---:|---|---|
+| Filtered − plain truncation | 2/6 | +$4 [−$1, +$11] | +0.02 [−0.02, +0.07] |
+| Filtered − forecast only | 6/6 | +$10 [+$9, +$12] | +0.39 [+0.34, +0.44] |
+
+- **The pre-registered mean test is not significant.** The filter gains a lot in Miami (+$19/day) and Philadelphia (+$8/day) and ties elsewhere.
+- **Its effect on the tail is large.** The filter's worst days are the forecast-only maker's worst days in every city, so it keeps truncation's gain without truncation's tail. Mean of the worst 5% of days:
+
+  | City | Plain truncation | Spike-filtered |
+  |---|---:|---:|
+  | Miami | −$932 | −$406 |
+  | Philadelphia | −$285 | −$138 |
+  | Denver | −$209 | −$147 |
+  | NYC | −$442 | −$332 |
+
+  The tail comparison was not pre-registered and rests on a handful of days per city.
+- This is the domain thesis again: the fix comes from knowing *how* the settlement sensor fails.
+
+### 6.8 Risk and capital: what b costs
+
+*Module: `market.risk_frontier`. Results: `data/results/risk_frontier/risk_frontier_tables.md`.*
+
+The standard bound says an LMSR loses at most b·ln(1/π_w) when outcome w wins. That gives two capital measures:
+
+- **Expected capital** = E[b·ln(1/π_w)] = **b × the prior's multiclass log loss.** A better forecast directly lowers the subsidy needed for the same liquidity.
+  - Log loss per unit of b in NYC: uniform 1.79, forecast 1.56, Kalshi 1.35.
+  - In Miami: 1.79, 1.20 and 1.16.
+- **Worst-case capital** = b·ln(1/min π). A sharp prior needs more of it: about 2.3× the uniform maker's at b = 300 in NYC. Measured this way, the uniform maker has the best or tied-best return in every city. A domain prior trades worst-case capital for expected capital.
+
+Findings:
+1. **At equal expected capital, the domain makers earn more.** At $50 and $150 a day, forecast + truncation beats the uniform maker in all seven cities. At $500 in NYC:
+
+   | Maker | $/day |
+   |---|---:|
+   | Forecast + truncation | $177 |
+   | Kalshi copy | $149 |
+   | Forecast | $133 |
+   | Uniform | $107 |
+
+2. **Each market has a capacity.**
+   - PnL rises with b, then collapses once the maker offers more liquidity than uninformed flow pays for.
+   - The best b is 300 in NYC and LA, 100 in Chicago and Miami, and 30 in Austin, Denver and Philadelphia.
+   - The uniform maker collapses at a lower b everywhere.
+3. **Equal-risk replay (Jessie, NYC; `docs/CALIBRATION_EXPERIMENT.md`) agrees.**
+   - With the worst-case opening bound fixed at $300 a day, bias + spread correction earns $14.75/day against −$7.04 for the uncorrected Gaussian.
+   - Bias correction alone earns $11.75; the Kalshi midpoint earns $27.79.
+   - Correcting the mean matters more than correcting the spread, and a better prior still earns more when risk, not b, is held fixed.
 
 ---
 
@@ -248,7 +356,8 @@ and pᵏ are the maker's prices just before tilt k.
 - **Counterfactual replay.** Fills assume real traders would have traded the same way against our quotes.
 - **Feed timing.** The live maker acts on the 1-minute reading from 5 minutes earlier as a stand-in for the public feed; the true public delay may differ.
 - **Release times** are approximate (NBM about 1¼ hours, GFS MOS about 3¾ hours after the cycle), and hourly candles blur anything faster.
-- **Short windows.** The six-city maker study has two months of training and 2½ months of testing, all spring and summer.
+- **Short windows.** The six-city maker study has two months of training and 2½ months of testing, all spring and summer. The full-year study (Section 6.6) addresses this, but its maker list and grids were fixed after the six-city results, so it is a stronger out-of-sample check, not a blind one.
+- **Placeholder tail edges.** The six-city ladder (Section 6.3) reads the open-ended bins with finite placeholder edges, so live truncation can write off a top bin that wins. This can only make its truncation gains look smaller. The full-year study uses the true edges.
 - **Post-hoc model choice** for the forest (Section 4.2).
 - **Station mismatch.** The 1-minute record and the official high differ by rounding; Denver and Washington DC have the weakest agreement and the least 1-minute coverage. A 2°F gap on one NYC day made the live maker write off the bin that won (Section 6.3).
 - **Thin markets.** In Austin, Minneapolis and Washington DC every maker earns about zero, so the domain ideas improve a break-even business there rather than create a profitable one.
@@ -257,7 +366,7 @@ and pᵏ are the maker's prices just before tilt k.
 
 ## 8. Conclusion
 
-A weather market maker cannot win by forecasting better than the crowd: public forecasts are in the price before they are published, and the market knows about a quarter more than public data the day before. Its domain edge is structural. Knowing that the high is a running maximum of one named station lets the maker reprice in real time, with a bounded extra worst-case loss, and that one mechanism improved results in every city we tested. Generic levers did not. The forecast still matters as the opening price and as a filter for informed flow, but its value is capped at the crowd's level. The broader lesson for domain-specialised market makers is to encode *how the domain resolves*, not just *what the domain predicts*.
+A weather market maker cannot win by forecasting better than the crowd: public forecasts are in the price before they are published, and the market knows about a quarter more than public data the day before. Its domain edge is structural. Knowing that the high is a running maximum of one named station lets the maker reprice in real time, with a bounded extra worst-case loss, and that one mechanism improved results in every city we tested, over a full year as well as one summer. Knowing how the station's sensor fails (lone one-minute spikes) removes most of truncation's tail cost. Generic levers did not help. The forecast still matters as the opening price and as a filter for informed flow, but its value is capped at the crowd's level. The broader lesson for domain-specialised market makers is to encode *how the domain resolves*, not just *what the domain predicts*.
 
 ---
 
@@ -277,6 +386,6 @@ python -m unittest discover -s tests -t .
 |---|---|---|
 | `collect/` | `nyc`, `check_nyc`, `trades`, `features`, `city_markets`, `realtime` | Downloads and validation |
 | `forecast/` | `climatology`, `persistence`, `baselines`, `probabilities`, `noaa_calibration`, `ml_model`, `public` | Forecasting models and the public forecast |
-| `market/` | `lmsr`, `metrics`, `backtest`, `makers`, `traders`, `calibrate_traders`, `plot_backtest` | Market makers and replays |
+| `market/` | `lmsr`, `metrics`, `backtest`, `makers`, `traders`, `calibrate_traders`, `plot_backtest`, `conservative`, `cross_city`, `ablation_replay`, `full_year`, `risk_frontier` | Market makers, replays, the full-year study and the capital analysis |
 | `analysis/` | `evaluate`, `plot_results`, `compare_forecasts`, `ml_compare`, `trader_behavior`, `efficiency`, `latency` | Scoring and studies of the market |
 | root | `config`, `cities`, `common`, `run_pipeline` | Study windows, city registry, shared helpers, entry point |

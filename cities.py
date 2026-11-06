@@ -32,6 +32,11 @@ CITIES = [
 ]
 BY_CODE = {c.code: c for c in CITIES}
 
+# Full-year market-maker study: the seven older series traded under NWS rules for the whole year.
+# The KXHIGHT* series (and Minneapolis, Washington DC) only start in 2026, so they are not included.
+FULL_YEAR_START = dt.date(2025, 8, 14)
+FULL_YEAR_CITIES = ['NYC', 'LAX', 'CHI', 'MIA', 'AUS', 'DEN', 'PHL']
+
 
 def standard_offset(city):
     """UTC offset of local standard time; the NWS climate day runs midnight to midnight standard time."""

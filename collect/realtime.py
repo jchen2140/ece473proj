@@ -23,13 +23,14 @@ from collect.features import iem_text, month_starts
 from common import DATA
 
 RAW = DATA / 'raw' / 'realtime'
+FULL_YEAR_RAW = DATA / 'raw' / 'realtime_full'  # --full-year outputs; per-ticker trade caches stay shared in RAW.
 ONE_MINUTE = 'https://mesonet.agron.iastate.edu/cgi-bin/request/asos1min.py'
 REALTIME_CITIES = ['LAX', 'NYC', 'CHI', 'AUS', 'MSP', 'DCA']  # Busiest to thinnest by daily volume.
 
 
-def one_minute(city):
+def one_minute(city, window_start=cities.WINDOW_START):
     rows = []
-    start, end = cities.WINDOW_START - dt.timedelta(days=1), cities.WINDOW_END + dt.timedelta(days=2)
+    start, end = window_start - dt.timedelta(days=1), cities.WINDOW_END + dt.timedelta(days=2)
     for month in month_starts(start, end):
         a = max(start, month)
         b = min(end, (month + dt.timedelta(days=32)).replace(day=1))
@@ -83,12 +84,12 @@ def write_rows(path, rows, fields):
         writer.writerows(rows)
 
 
-def collect(code, workers):
+def collect(code, workers, start=cities.WINDOW_START, markets_root=DATA / 'cities', out_root=RAW):
     city = cities.BY_CODE[code]
-    with (DATA / 'cities' / code / 'markets.csv').open(newline='', encoding='utf-8') as f:
+    with (markets_root / code / 'markets.csv').open(newline='', encoding='utf-8') as f:
         tickers = [r['market_ticker'] for r in csv.DictReader(f)]
-    minute = one_minute(city)
-    write_rows(RAW / code / 'asos1min.csv.gz', [(r['valid_utc'], r['tmpf']) for r in minute], ['valid_utc', 'tmpf'])
+    minute = one_minute(city, start)
+    write_rows(out_root / code / 'asos1min.csv.gz', [(r['valid_utc'], r['tmpf']) for r in minute], ['valid_utc', 'tmpf'])
     out = []
     if code == 'NYC':  # Already collected for the backtest.
         wanted = set(tickers)
@@ -100,7 +101,7 @@ def collect(code, workers):
         with ThreadPoolExecutor(workers) as pool:
             for ticker, trades in pool.map(ticker_trades, [(code, t) for t in tickers]):
                 out.extend((ticker, *t) for t in trades)
-    write_rows(RAW / code / 'trades.csv.gz', out, ['market_ticker', 'created_time', 'taker_side', 'count', 'yes_price'])
+    write_rows(out_root / code / 'trades.csv.gz', out, ['market_ticker', 'created_time', 'taker_side', 'count', 'yes_price'])
     return len(minute), len(out)
 
 
@@ -108,9 +109,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cities', nargs='*', default=REALTIME_CITIES)
     parser.add_argument('--workers', type=int, default=4)
+    parser.add_argument('--full-year', action='store_true',
+                        help='Use data/cities_full/ markets from cities.FULL_YEAR_START; write to data/raw/realtime_full/')
     args = parser.parse_args()
-    for code in args.cities:
-        minutes, trades = collect(code, args.workers)
+    if args.full_year:
+        codes = args.cities if args.cities != REALTIME_CITIES else cities.FULL_YEAR_CITIES
+        settings = (cities.FULL_YEAR_START, DATA / 'cities_full', FULL_YEAR_RAW)
+    else:
+        codes, settings = args.cities, (cities.WINDOW_START, DATA / 'cities', RAW)
+    for code in codes:
+        minutes, trades = collect(code, args.workers, *settings)
         print(f'{code}: {minutes:,} one-minute temperatures, {trades:,} trades', flush=True)
 
 

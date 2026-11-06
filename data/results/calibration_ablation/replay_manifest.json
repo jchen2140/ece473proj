@@ -1,0 +1,35 @@
+{
+  "test_days": 105,
+  "excluded_days": [],
+  "models": [
+    "empirical_smoothed",
+    "gaussian_uncorrected",
+    "bias_only",
+    "spread_only",
+    "bias_and_spread",
+    "kalshi"
+  ],
+  "equal_loss_budget": 300.0,
+  "fixed_b_reference": 300,
+  "fees": [
+    0.0,
+    0.05
+  ],
+  "fee_source": "Existing train-selected calibrated NOAA replay; shared across every variant.",
+  "budget_selection": "Illustrative fixed budget, not optimized on test outcomes.",
+  "risk_modes": [
+    "equal_loss_budget",
+    "fixed_b"
+  ],
+  "bootstrap_replicates": 1000,
+  "bootstrap_block_days": [
+    1,
+    7
+  ],
+  "confirmation_status": "exploratory_previously_examined_test_period",
+  "input_sha256": {
+    "results/calibration_ablation/probabilities.csv": "3c87fc3680ee42cf25473ee11347ebadc2448f62c1acd1b3f6879e27b27e66e1",
+    "flow/trades.csv.gz": "07ca1864a3caba4fc9040b980a241ec36c1175836b0a8f3d4ef40ca60e0b3a77",
+    "results/backtest/summary.json": "f0813c55efa6f64814dd2f6761fcd71874cebd229d9929a4a9a43c29b137b715"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "city": "MIA",
+  "series": "KXHIGHMIA",
+  "days": 364,
+  "dropped_days": {
+    "2026-04-11": "4 bins"
+  },
+  "candles": 82178,
+  "asos_check": {
+    "days": 291,
+    "within_1f": 0.8487972508591065,
+    "mean_gap_f": 0.8144329896907216
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "city": "NYC",
+  "series": "KXHIGHNY",
+  "days": 365,
+  "dropped_days": {},
+  "candles": 82751,
+  "asos_check": {
+    "days": 297,
+    "within_1f": 0.898989898989899,
+    "mean_gap_f": 0.67003367003367
+  }
+}

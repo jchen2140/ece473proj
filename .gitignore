@@ -10,3 +10,5 @@ data/raw/mos/
 data/raw/asos/
 data/raw/cities/
 data/raw/realtime/
+data/raw/realtime_full/
+data/results/full_year/grid_daily.csv.gz

@@ -30,8 +30,8 @@ def implied_median(probs, lows, highs):
     return lows[i] + frac * (highs[i] - lows[i])
 
 
-def load_city(city):
-    folder = DATA / 'cities' / city.code
+def load_city(city, root=None):
+    folder = (root or DATA / 'cities') / city.code
     markets = pd.read_csv(folder / 'markets.csv')
     candles = read_gz(folder / 'candles.csv.gz')
     days = {}
@@ -75,9 +75,9 @@ def load_city(city):
     return days, panel
 
 
-def load_runs(city, name, days):
+def load_runs(city, name, days, root=None):
     """Per target day: (release time, max forecast, spread) for every archived run, oldest first."""
-    raw = read_gz(DATA / 'cities' / city.code / f'{"nbm" if name == "nbm" else "gfs_mos"}.csv.gz')
+    raw = read_gz((root or DATA / 'cities') / city.code / f'{"nbm" if name == "nbm" else "gfs_mos"}.csv.gz')
     raw['runtime'] = pd.to_datetime(raw['runtime'], utc=True)
     raw['ftime'] = pd.to_datetime(raw['ftime'], utc=True)
     maxima = raw[raw['max_f'].notna()].copy()
@@ -88,8 +88,8 @@ def load_runs(city, name, days):
     return maxima.sort_values('runtime'), temps
 
 
-def load_obs(city):
-    obs = read_gz(DATA / 'cities' / city.code / 'asos.csv.gz')
+def load_obs(city, root=None):
+    obs = read_gz((root or DATA / 'cities') / city.code / 'asos.csv.gz')
     obs['time'] = pd.to_datetime(obs['valid_utc'], utc=True)
     return obs.sort_values('time')
 

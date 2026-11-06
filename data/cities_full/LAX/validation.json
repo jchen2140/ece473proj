@@ -1,0 +1,12 @@
+{
+  "city": "LAX",
+  "series": "KXHIGHLAX",
+  "days": 365,
+  "dropped_days": {},
+  "candles": 89480,
+  "asos_check": {
+    "days": 303,
+    "within_1f": 0.858085808580858,
+    "mean_gap_f": 0.8184818481848185
+  }
+}

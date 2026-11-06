@@ -29,6 +29,7 @@ from common import DATA, UTC
 from collect.nyc import API, fetch
 
 OUT = DATA / 'cities'
+FULL_YEAR_OUT = DATA / 'cities_full'  # --full-year: separate outputs, so the 15-city study is unchanged.
 RAW = DATA / 'raw' / 'cities'
 KALSHI_INTERVAL = 0.35  # Seconds between Kalshi requests across all threads; faster rates draw 429s.
 MONTHS = {m: i + 1 for i, m in enumerate(('JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'))}
@@ -91,12 +92,12 @@ def series_markets(city):
     return list(markets.values())
 
 
-def window_events(city, markets):
+def window_events(city, markets, start=cities.WINDOW_START):
     """Six-bin settled events in the window under NWS rules; anything else is counted and dropped."""
     events, dropped = {}, {}
     for m in markets:
         day = event_date(m['event_ticker'])
-        if day and cities.WINDOW_START <= day <= cities.WINDOW_END and m.get('result') in ('yes', 'no'):
+        if day and start <= day <= cities.WINDOW_END and m.get('result') in ('yes', 'no'):
             events.setdefault(day, []).append(m)
     rows = []
     for day, group in sorted(events.items()):
@@ -115,6 +116,15 @@ def window_events(city, markets):
     return rows, dropped
 
 
+def parse_time(text):
+    """ISO time from Kalshi. Python 3.9's fromisoformat needs 0, 3 or 6 fractional digits; Kalshi sends 1-6."""
+    text = text.replace('Z', '+00:00')
+    match = re.match(r'(.*\.)(\d{1,6})(\+.*)$', text)
+    if match:
+        text = match[1] + match[2].ljust(6, '0') + match[3]
+    return dt.datetime.fromisoformat(text)
+
+
 def candles(job):
     city, row = job
     path = RAW / city.code / 'candles' / f"{row['market_ticker']}.json"
@@ -123,8 +133,8 @@ def candles(job):
     ticker = row['market_ticker']
     route = (f'historical/markets/{ticker}/candlesticks' if row['tier'] == 'historical'
              else f'series/{city.series}/markets/{ticker}/candlesticks')
-    start = int(dt.datetime.fromisoformat(row['open_time'].replace('Z', '+00:00')).timestamp()) - 3600
-    end = int(dt.datetime.fromisoformat(row['close_time'].replace('Z', '+00:00')).timestamp()) + 3600
+    start = int(parse_time(row['open_time']).timestamp()) - 3600
+    end = int(parse_time(row['close_time']).timestamp()) + 3600
     value = kalshi(route, {'start_ts': start, 'end_ts': end, 'period_interval': 60}).get('candlesticks') or []
     path.parent.mkdir(parents=True, exist_ok=True)
     partial = path.with_suffix('.part')
@@ -141,10 +151,10 @@ def close_value(candle, field):
 
 # ---------------------------------------------------------------- IEM
 
-def mos_rows(city, model):
+def mos_rows(city, model, window_start=cities.WINDOW_START):
     """Every archived run: per target day, the max-temperature forecast; plus 3-hourly temperatures."""
     out = []
-    start, end = cities.WINDOW_START - dt.timedelta(days=4), cities.WINDOW_END + dt.timedelta(days=1)
+    start, end = window_start - dt.timedelta(days=4), cities.WINDOW_END + dt.timedelta(days=1)
     for month in month_starts(start, end):
         stop = (month + dt.timedelta(days=32)).replace(day=1)
         url = f'{MOS}?station={city.icao}&model={model}&sts={month:%Y-%m-%d}T00:00Z&ets={stop:%Y-%m-%d}T00:00Z&format=csv'
@@ -160,8 +170,8 @@ def mos_rows(city, model):
     return [{k: '' if v is None else v for k, v in r.items()} for r in out]
 
 
-def asos_rows(city):
-    a, b = cities.WINDOW_START - dt.timedelta(days=3), cities.WINDOW_END + dt.timedelta(days=2)
+def asos_rows(city, window_start=cities.WINDOW_START):
+    a, b = window_start - dt.timedelta(days=3), cities.WINDOW_END + dt.timedelta(days=2)
     url = (f'{ASOS}?station={city.asos}&data=tmpf&tz=Etc/UTC&format=onlycomma&missing=M&report_type=3&report_type=4'
            f'&year1={a.year}&month1={a.month}&day1={a.day}&year2={b.year}&month2={b.month}&day2={b.day}')
     text = iem_text(f'cities/{city.code}/asos_{a:%Y%m%d}_{b:%Y%m%d}.csv', url)
@@ -182,10 +192,10 @@ def validate(city, markets, obs):
             'mean_gap_f': sum(gaps) / max(1, len(gaps))}
 
 
-def collect(city, workers):
-    out = OUT / city.code
+def collect(city, workers, start=cities.WINDOW_START, root=OUT):
+    out = root / city.code
     out.mkdir(parents=True, exist_ok=True)
-    markets, dropped = window_events(city, series_markets(city))
+    markets, dropped = window_events(city, series_markets(city), start)
     with (out / 'markets.csv').open('w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=list(markets[0]), lineterminator='\n')
         writer.writeheader()
@@ -198,9 +208,9 @@ def collect(city, workers):
                              'end_period_ts': c['end_period_ts'], 'yes_bid': close_value(c, 'yes_bid'),
                              'yes_ask': close_value(c, 'yes_ask'), 'volume': c.get('volume_fp', c.get('volume', ''))})
     write_gz(out / 'candles.csv.gz', rows)
-    write_gz(out / 'nbm.csv.gz', mos_rows(city, 'NBS'))
-    write_gz(out / 'gfs_mos.csv.gz', mos_rows(city, 'GFS'))
-    obs = asos_rows(city)
+    write_gz(out / 'nbm.csv.gz', mos_rows(city, 'NBS', start))
+    write_gz(out / 'gfs_mos.csv.gz', mos_rows(city, 'GFS', start))
+    obs = asos_rows(city, start)
     write_gz(out / 'asos.csv.gz', obs)
     report = {'city': city.code, 'series': city.series, 'days': len(markets) // 6, 'dropped_days': dropped,
               'candles': len(rows), 'asos_check': validate(city, markets, obs)}
@@ -212,9 +222,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cities', nargs='*', default=[c.code for c in cities.CITIES])
     parser.add_argument('--workers', type=int, default=4)
+    parser.add_argument('--full-year', action='store_true',
+                        help=f'Collect cities.FULL_YEAR_CITIES from {cities.FULL_YEAR_START} into data/cities_full/')
     args = parser.parse_args()
-    for code in args.cities:
-        report = collect(cities.BY_CODE[code], args.workers)
+    if args.full_year:
+        codes, start, root = (args.cities if args.cities != [c.code for c in cities.CITIES] else cities.FULL_YEAR_CITIES,
+                              cities.FULL_YEAR_START, FULL_YEAR_OUT)
+    else:
+        codes, start, root = args.cities, cities.WINDOW_START, OUT
+    for code in codes:
+        report = collect(cities.BY_CODE[code], args.workers, start, root)
         check = report['asos_check']
         print(f"{code}: {report['days']} days, {report['candles']:,} candles, {len(report['dropped_days'])} dropped; "
               f"settlement within 1F of ASOS max on {check['within_1f']:.0%} of {check['days']} days", flush=True)

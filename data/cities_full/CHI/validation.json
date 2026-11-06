@@ -1,0 +1,12 @@
+{
+  "city": "CHI",
+  "series": "KXHIGHCHI",
+  "days": 365,
+  "dropped_days": {},
+  "candles": 84716,
+  "asos_check": {
+    "days": 301,
+    "within_1f": 0.9335548172757475,
+    "mean_gap_f": 0.6943521594684385
+  }
+}

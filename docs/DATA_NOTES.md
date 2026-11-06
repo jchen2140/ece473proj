@@ -103,3 +103,22 @@ Re-running every stage through `run_pipeline.py` after the move to packages repr
 
 - The random forest averages its trees across parallel threads, so `data/ml_forecasts.csv` differs between runs by at most about 4e-8. In the NYC LMSR backtest this can flip a fill that sits exactly at its limit price, which moves individual ML-seeded days in `replay_daily.csv`, but no reported figure changes at the precision shown.
 - `forecast.baselines` re-downloads the GHCN station file, which grows by the days since the last run. Every study window ends Aug 13, 2026, so only the post-training record counts change.
+
+## Full-year, seven-city data (Milestone 2)
+
+Collected Nov 6, 2026 with `collect.city_markets --full-year` and `collect.realtime --full-year`.
+
+| City | Days | Settlement within 1°F of the hourly ASOS max | 1-minute readings | Taker trades |
+|---|---:|---:|---:|---:|
+| Chicago | 365 | 93% | 448,046 | 1,797,067 |
+| Miami | 364 (1 dropped) | 85% | 396,720 | 1,652,529 |
+| Austin | 365 | 89% | 291,383 | 1,313,956 |
+| Denver | 365 | 80% | 476,282 | 1,116,228 |
+| Philadelphia | 365 | 91% | 429,222 | 882,176 |
+| Los Angeles | 365 | — | 319,236 | 2,918,890 |
+
+New York reuses its existing trade file (`data/flow/trades.csv.gz`).
+
+- **Austin's 1-minute coverage is the thinnest.** It has only 106 strict days (≥ 80% minute coverage and an official high). So its conservative margin can first be fit in March, and its test period starts then.
+- **A lone corrupt 1-minute reading can be far off.** One LA reading sets a 52°F "sensor error" in June. Use a robust summary (the 5-minute median) rather than the raw maximum for anything that depends on the record's extremes.
+- **Python 3.9 date parsing.** Kalshi timestamps with 5-digit fractional seconds fail Python 3.9's `fromisoformat`. `collect.city_markets.parse_time` pads them.

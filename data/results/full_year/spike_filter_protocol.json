@@ -1,0 +1,35 @@
+{
+  "created_utc": "2026-11-06T18:03:35+00:00",
+  "rule": "forecast_live_filtered: live running-max truncation computed on the running maximum of a trailing 5-minute rolling median of the 1-minute ASOS readings, instead of the raw readings. Same tilt weights (0.3 touched, 0.001 cleared by 1F), same 5-minute feed delay, same walk-forward b/fee selection as every other maker.",
+  "window": "5min",
+  "why_this_window": "Matches the cadence of the public 5-minute feed the maker is assumed to see; not chosen by comparing PnL.",
+  "diagnosis": "NYC full-year replay only. The four NYC days where plain truncation lost most against the forecast-only maker (2026-07-31, 2026-01-14, 2025-12-13, and the margin-setting outliers 2025-10-09, 2026-04-10, 2026-03-29) each had a single 1-minute reading at the day maximum; the 5-minute rolling median stayed at or below the official high + 1F.",
+  "cities_seen_before_freezing": [
+    "NYC"
+  ],
+  "cities_held_out": [
+    "LAX",
+    "CHI",
+    "MIA",
+    "AUS",
+    "DEN",
+    "PHL"
+  ],
+  "held_out_one_minute_data_on_disk_at_freeze": {
+    "LAX": [],
+    "CHI": [],
+    "MIA": [],
+    "AUS": [],
+    "DEN": [],
+    "PHL": []
+  },
+  "primary_held_out_comparisons": [
+    "forecast_live_filtered - forecast_live (same settings), per city and pooled over the six held-out cities",
+    "forecast_live_filtered - forecast (same settings)"
+  ],
+  "report_regardless_of_outcome": true,
+  "code_sha256": {
+    "market/full_year.py": "12a64ea693170921dc3494decd580171a983178032efec702d746a4719888224",
+    "market/makers.py": "5c98d9c169053590f809a15d856b857010aa3120b6efcc95b6fac98ca9c8376f"
+  }
+}

@@ -21,6 +21,8 @@ COLLECT = [
     ('collect.features', ['--workers', '8'], 'ECMWF, NWS MOS, ASOS features -> data/features/'),
     ('collect.city_markets', [], '15 cities: quotes, MOS runs, ASOS -> data/cities/'),
     ('collect.realtime', [], '6 cities: 1-minute ASOS and every trade -> data/raw/realtime/'),
+    ('collect.city_markets', ['--full-year'], '7 cities, Aug 2025-Aug 2026: quotes, MOS runs, ASOS -> data/cities_full/'),
+    ('collect.realtime', ['--full-year'], '7 cities, full year: 1-minute ASOS and every trade -> data/raw/realtime_full/'),
 ]
 ANALYSIS = [
     ('forecast.climatology', [], '1991-2020 seasonal climatology -> data/climatology/'),
@@ -38,6 +40,14 @@ ANALYSIS = [
     ('analysis.efficiency', [], '15-city information efficiency -> data/results/efficiency/'),
     ('analysis.latency', [], 'minute-level knock-out latency -> data/results/realtime/'),
     ('market.makers', [], 'domain market-maker ladder on 6 cities -> data/results/adaptive_mm/'),
+    ('forecast.calibration_ablation', [], 'controlled GEFS bias/spread ablation -> data/results/calibration_ablation/'),
+    ('market.ablation_replay', [], 'equal-risk and fixed-b replay of the ablation -> data/results/calibration_ablation/'),
+    ('analysis.plot_calibration_ablation', [], 'ablation figure'),
+    ('market.conservative', ['--cities', 'NYC'], 'training-only sensor margin, NYC -> data/results/conservative_truncation/'),
+    ('market.cross_city', [], 'frozen-rule Chicago replication -> data/results/conservative_truncation/'),
+    ('market.plot_cross_city', [], 'replication figure'),
+    ('market.full_year', [], '7-city full-year walk-forward ladder -> data/results/full_year/'),
+    ('market.risk_frontier', [], 'PnL vs capital as b varies -> data/results/risk_frontier/'),
 ]
 
 
