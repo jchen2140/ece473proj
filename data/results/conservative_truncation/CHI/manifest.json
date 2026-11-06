@@ -1,0 +1,33 @@
+{
+  "city": "CHI",
+  "margin": {
+    "margin_f": 1.0,
+    "quantile": 0.99,
+    "training_days": 42,
+    "first_fit_date": "2026-04-12",
+    "latest_fit_date": "2026-05-30",
+    "training_fraction_exceeding_margin": 0.0,
+    "training_max_positive_error_f": 1.0
+  },
+  "common_settings": {
+    "b0": 100,
+    "fee": 0.05,
+    "train_days": 42,
+    "mean_training_pnl": 57.46305282548829,
+    "sd_ref": 2.9362608834915775
+  },
+  "minimum_minute_coverage": 0.8,
+  "last_information_date_allowed_for_fit": "2026-05-30",
+  "feed_delay_seconds": 300,
+  "test_days": 69,
+  "bootstrap_replicates": 1000,
+  "confirmation_status": "frozen-rule out-of-city replication; earlier unguarded CHI aggregates visible; not fully blind",
+  "contract_boundary_handling": "True infinite tails restored for every comparison; original plotting placeholders are not knockout boundaries.",
+  "input_sha256": {
+    "cities/CHI/markets.csv": "3bb5db3a451a5f6a7526ce0cf4e2caeaaf43e9af9066d1969e9b33b3df4df1bf",
+    "raw/realtime/CHI/asos1min.csv.gz": "0e321e3ce83dced289b80bdba171ecf8de08c39215fc2ea7d811e0cbb1e4e428",
+    "raw/realtime/CHI/trades.csv.gz": "df1551ea2e1a7cd333263c5486d88dbf658cc9f7192f3d11beb753f734d1d8ae"
+  },
+  "replication_protocol_sha256": "5203070cea570b2371e90442d6d497241d3733bb0679d31709f9c29c87ecd48e",
+  "replication_completed_at_utc": "2026-11-06T00:49:44.297158+00:00"
+}

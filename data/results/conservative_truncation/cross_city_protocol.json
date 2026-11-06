@@ -1,0 +1,38 @@
+{
+  "registered_at_utc": "2026-11-06T00:35:57.925637+00:00",
+  "replication_city": "CHI",
+  "station": "KMDW / Chicago Midway",
+  "base_revision": "8f694e63b88f1b6292ec890f799a62e45ad7611b",
+  "status": "Frozen before inspecting conservative CHI replay outputs; earlier unguarded CHI aggregate results were previously visible.",
+  "rule": "Per-city nearest-rank 99th percentile of positive training sensor-minus-official error, rounded up to 0.5F.",
+  "training_availability": "Fit no later than D-2 of first eligible test date; no test-date selection or outcomes used to tune.",
+  "coverage_fraction": 0.8,
+  "feed_delay_seconds": 300,
+  "variants": [
+    "forecast_only",
+    "current_truncation",
+    "conservative_truncation"
+  ],
+  "common_settings": "Choose b and fee using forecast-only training PnL on eligible available dates; same setting for all three.",
+  "evaluation_window": [
+    "2026-06-01",
+    "2026-08-13"
+  ],
+  "main_comparisons": [
+    "conservative minus current: mean PnL and worst-5-percent mean PnL",
+    "conservative minus forecast-only: mean PnL"
+  ],
+  "diagnostics": [
+    "heavily discounted winner count",
+    "filled volume",
+    "worst day",
+    "fee/trading PnL decomposition"
+  ],
+  "uncertainty": "1000 paired day resamples and 7-calendar-day moving-block resamples, preserving missing-date masks.",
+  "tail_statistic": "Mean of ceil(0.05*n) lowest PnL observations; larger/less negative is better.",
+  "no_selection": "Retain and report CHI result even if margin is zero, uncertain, or worse; do not change quantile, coverage, or fees after results.",
+  "code_sha256": {
+    "market/conservative.py": "590a3bca1f66115c1b62810505c79465f336d75310e90a4d9871013b6cd887f3",
+    "market/makers.py": "5c98d9c169053590f809a15d856b857010aa3120b6efcc95b6fac98ca9c8376f"
+  }
+}

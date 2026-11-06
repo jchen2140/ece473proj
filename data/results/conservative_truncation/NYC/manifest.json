@@ -1,0 +1,31 @@
+{
+  "city": "NYC",
+  "margin": {
+    "margin_f": 1.0,
+    "quantile": 0.99,
+    "training_days": 40,
+    "first_fit_date": "2026-04-12",
+    "latest_fit_date": "2026-05-30",
+    "training_fraction_exceeding_margin": 0.0,
+    "training_max_positive_error_f": 1.0
+  },
+  "common_settings": {
+    "b0": 300,
+    "fee": 0.05,
+    "train_days": 40,
+    "mean_training_pnl": 170.56194436004526,
+    "sd_ref": 2.515061843177797
+  },
+  "minimum_minute_coverage": 0.8,
+  "last_information_date_allowed_for_fit": "2026-05-30",
+  "feed_delay_seconds": 300,
+  "test_days": 52,
+  "bootstrap_replicates": 1000,
+  "confirmation_status": "exploratory; known NYC failure motivated this experiment",
+  "contract_boundary_handling": "True infinite tails restored for every comparison; original plotting placeholders are not knockout boundaries.",
+  "input_sha256": {
+    "cities/NYC/markets.csv": "b8a707c6bc264f3b959612ec6c448532d0b6b58b00888e10712a78a849e44ab4",
+    "raw/realtime/NYC/asos1min.csv.gz": "1adc5365dfa6ab00fc97c4892371e49165595e09287714ca32e62dbfaf5842f1",
+    "raw/realtime/NYC/trades.csv.gz": "e4e25cd2ed54c53d7a3adf1db692b885132a43f2af311bc103f867a949babcde"
+  }
+}

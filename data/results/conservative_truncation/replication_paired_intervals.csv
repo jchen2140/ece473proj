@@ -1,0 +1,17 @@
+city,first,second,metric,bootstrap_block_days,test_days,mean_difference,ci_low,ci_high
+NYC,conservative_truncation,current_truncation,mean_net_pnl,1,52,-19.914562750100984,-78.25331178890038,53.83028674105176
+NYC,conservative_truncation,current_truncation,worst_5pct_mean_pnl,1,52,411.3989390339535,-35.72776449211719,1022.4678865290017
+NYC,conservative_truncation,forecast_only,mean_net_pnl,1,52,23.08678750378198,8.793758292833319,40.896937514817296
+NYC,conservative_truncation,forecast_only,worst_5pct_mean_pnl,1,52,18.770895977800592,0.0,49.40901569132939
+NYC,conservative_truncation,current_truncation,mean_net_pnl,7,52,-19.914562750100984,-77.80525066088288,35.62294029744459
+NYC,conservative_truncation,current_truncation,worst_5pct_mean_pnl,7,52,411.3989390339535,-37.731351580302544,1141.1356982620268
+NYC,conservative_truncation,forecast_only,mean_net_pnl,7,52,23.08678750378198,9.61112558356384,47.644389178669435
+NYC,conservative_truncation,forecast_only,worst_5pct_mean_pnl,7,52,18.770895977800592,0.0,49.40901569132939
+CHI,conservative_truncation,current_truncation,mean_net_pnl,1,69,-4.840347572304256,-15.34533817248117,6.005594668763419
+CHI,conservative_truncation,current_truncation,worst_5pct_mean_pnl,1,69,15.949421328486778,-10.91144006256795,58.650473658053066
+CHI,conservative_truncation,forecast_only,mean_net_pnl,1,69,1.563302905411555,0.6672963647878545,2.565637212876758
+CHI,conservative_truncation,forecast_only,worst_5pct_mean_pnl,1,69,1.2994260365458672,0.0,3.4289373574675324
+CHI,conservative_truncation,current_truncation,mean_net_pnl,7,69,-4.840347572304256,-15.937070356405172,1.54561697336719
+CHI,conservative_truncation,current_truncation,worst_5pct_mean_pnl,7,69,15.949421328486778,-16.86945875323886,49.508791039787006
+CHI,conservative_truncation,forecast_only,mean_net_pnl,7,69,1.563302905411555,0.7966716967783215,2.429254772613672
+CHI,conservative_truncation,forecast_only,worst_5pct_mean_pnl,7,69,1.2994260365458672,0.0,3.4289373574675324

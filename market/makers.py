@@ -173,7 +173,7 @@ def informed_times(day):
     return np.sort(np.asarray(times))
 
 
-def replay(day, maker, b0, fee, kappa, sd_ref):
+def replay(day, maker, b0, fee, kappa, sd_ref, tilt_function=None):
     spec = SPECS[maker]
     prior = day['priors'][spec['prior']]
     n = len(prior)
@@ -189,7 +189,7 @@ def replay(day, maker, b0, fee, kappa, sd_ref):
             break
         b = b_day
         if spec.get('live'):
-            weights, m = tilt(day, ts)
+            weights, m = (tilt_function or tilt)(day, ts)
             if not np.array_equal(weights, applied):
                 w *= weights / applied
                 applied = weights

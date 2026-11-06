@@ -47,6 +47,9 @@ Each stage is also a module you can run by hand, for example `python -m analysis
 
 ## More detail
 
+- [docs/CROSS_CITY_REPLICATION.md](docs/CROSS_CITY_REPLICATION.md): a frozen-rule Chicago replication of the conservative-truncation procedure, with paired average-PnL and worst-tail uncertainty. Run `python -m market.cross_city` after collecting Chicago's real-time cache and producing the NYC pilot outputs.
+- [docs/CONSERVATIVE_TRUNCATION.md](docs/CONSERVATIVE_TRUNCATION.md): a training-only sensor-error margin, current/guarded/no-truncation comparison, coverage audit and NYC risk–return results. Run `python -m market.conservative --cities NYC` after rebuilding that city's real-time cache. Outputs are separate from the existing adaptive-maker results.
+
 - [docs/paper.md](docs/paper.md): the paper.
 - [docs/DATA_NOTES.md](docs/DATA_NOTES.md): data decisions, the settlement-source change, model choice.
 - [docs/PIPELINE_NOTES.md](docs/PIPELINE_NOTES.md): per-milestone collection and matching detail.
