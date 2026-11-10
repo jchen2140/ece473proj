@@ -1,0 +1,31 @@
+{
+  "city": "MSP",
+  "margin": {
+    "margin_f": 1.0,
+    "quantile": 0.99,
+    "training_days": 42,
+    "first_fit_date": "2026-04-13",
+    "latest_fit_date": "2026-05-30",
+    "training_fraction_exceeding_margin": 0.0,
+    "training_max_positive_error_f": 1.0
+  },
+  "common_settings": {
+    "b0": 30,
+    "fee": 0.08,
+    "train_days": 42,
+    "mean_training_pnl": 2.2102455929662903,
+    "sd_ref": 2.9884687845761455
+  },
+  "minimum_minute_coverage": 0.8,
+  "last_information_date_allowed_for_fit": "2026-05-31",
+  "feed_delay_seconds": 300,
+  "test_days": 60,
+  "bootstrap_replicates": 1000,
+  "confirmation_status": "exploratory; known NYC failure motivated this experiment",
+  "contract_boundary_handling": "True infinite tails restored for every comparison; original plotting placeholders are not knockout boundaries.",
+  "input_sha256": {
+    "cities\\MSP\\markets.csv": "3f7fb720ef852fce3c1daac148cc8ba336efe11dffdaec3d452922ed32e3686c",
+    "raw\\realtime\\MSP\\asos1min.csv.gz": "eb34abc2016a54da6674aff385aeaf6b539d8c4de349a422f2f7ff97a9702075",
+    "raw\\realtime\\MSP\\trades.csv.gz": "3a35aab25d69a133956f12de259839e15c77a4e38c5745de241313ef52cbda61"
+  }
+}

@@ -2,7 +2,7 @@
 
 ECE 473 project, track 1a. We build a market maker specialised for Kalshi's daily high-temperature contracts and test it on real order flow against general-purpose and forecast-only baselines.
 
-**Thesis.** A weather market maker cannot win by out-forecasting the crowd: public forecasts are already in the price before they are published. Its domain advantage comes from building in how weather information *arrives and settles*. The daily high is a running maximum of one named station, so live observations rule outcomes out permanently. A maker that reprices on the live station maximum improves test-day PnL in all six cities tested, with a bounded extra worst-case loss; generic levers (confidence scaling, throttling, halting at noon) do not.
+**Thesis.** A weather market maker's domain advantage comes less from forecasting the weather than from knowing how the outcome is decided. Public forecasts are already in the price before they are published, and posting even a good forecast as a fixed price loses thousands of dollars a day. The forecast is the right opening price, and the LMSR then learns from traders. The daily high is a running maximum of one named station, so the maker can also learn from the live thermometer what it would otherwise learn from informed traders at a loss. That pays in all six cities tested, halves with a 5-minute feed delay, and has a provable cost bound that holds as long as the sensor matches the official record. When it did not (twice), a training-only safety margin repaired the observed failure.
 
 **Read [docs/paper.md](docs/paper.md)** for the full write-up: the domain, data and backtest design, forecasting results, how the market behaves, the market-maker ladder, the loss bound and limitations.
 
@@ -14,8 +14,11 @@ ECE 473 project, track 1a. We build a market maker specialised for Kalshi's dail
 | Does it beat the market? | No: Kalshi 0.109; the forecast adds a little in a blend | same |
 | Is public forecast information priced in? | Mostly before release; Kalshi removes 27% of the public forecast's error at the noon cutoff, in all 15 cities | `data/results/efficiency/efficiency_tables.md` |
 | How fast are station observations priced? | Mostly within minutes; 65–91% of ruled-out bins dead within 15 minutes | `data/results/realtime/realtime_tables.md` |
-| What makes a better market maker? | A weather-forecast prior and live running-maximum truncation: each positive in 6/6 cities, pooled significant; truncation's extra tail risk stays within a proven bound | `data/results/adaptive_mm/adaptive_mm_tables.md` |
-| What doesn't? | Confidence-scaled liquidity, throttling around information events, halting at noon | same |
+| Why not just post the forecast as the price? | A fixed-price quoter loses $3k–$23k a day in every city; the LMSR's updating is what lets a forecast-based maker survive, and within ~12 hours its opening price no longer matters | `data/results/mechanism/mechanism_tables.md` |
+| What makes a better market maker? | A weather-forecast prior and live running-maximum truncation: each positive in 6/6 cities, pooled significant | `data/results/adaptive_mm/adaptive_mm_tables.md` |
+| How much is live station data worth? | Truncation gain roughly doubles with a live feed vs 5 minutes old, and is gone by 15–30 minutes | `data/results/mechanism/mechanism_tables.md` |
+| What happens when the sensor is wrong? | Two write-offs of the winning bin (NYC 2°F rounding gap, LA 120°F spike); a training-only margin fixes NYC and beats forecast-only in 4/4 active cities | `data/results/conservative_truncation/six_city_summary.md` |
+| What doesn't help? | Fixed prices, confidence-scaled liquidity, throttling around information events, halting at noon | same |
 | Does liquidity make prices smarter? | No: it tightens spreads only | `data/results/efficiency/efficiency_tables.md` |
 
 ## Layout
@@ -47,10 +50,10 @@ Each stage is also a module you can run by hand, for example `python -m analysis
 
 ## More detail
 
-- [docs/CROSS_CITY_REPLICATION.md](docs/CROSS_CITY_REPLICATION.md): a frozen-rule Chicago replication of the conservative-truncation procedure, with paired average-PnL and worst-tail uncertainty. Run `python -m market.cross_city` after collecting Chicago's real-time cache and producing the NYC pilot outputs.
-- [docs/CONSERVATIVE_TRUNCATION.md](docs/CONSERVATIVE_TRUNCATION.md): a training-only sensor-error margin, current/guarded/no-truncation comparison, coverage audit and NYC risk–return results. Run `python -m market.conservative --cities NYC` after rebuilding that city's real-time cache. Outputs are separate from the existing adaptive-maker results.
-
 - [docs/paper.md](docs/paper.md): the paper.
+- [docs/CONSERVATIVE_TRUNCATION.md](docs/CONSERVATIVE_TRUNCATION.md): the training-only sensor-error margin, the coverage audit and the NYC pilot.
+- [docs/CROSS_CITY_REPLICATION.md](docs/CROSS_CITY_REPLICATION.md): the registered, frozen-rule Chicago replication. `market/makers.py` and `market/conservative.py` are hash-locked by its protocol, so new studies (`market/mechanism.py`) import them rather than edit them.
+- [docs/PRESENTATION_OUTLINE.md](docs/PRESENTATION_OUTLINE.md): the talk, slide by slide.
 - [docs/DATA_NOTES.md](docs/DATA_NOTES.md): data decisions, the settlement-source change, model choice.
 - [docs/PIPELINE_NOTES.md](docs/PIPELINE_NOTES.md): per-milestone collection and matching detail.
 - [docs/CLIMATOLOGY_BASELINE.md](docs/CLIMATOLOGY_BASELINE.md), [docs/MILESTONE1_COVERAGE.md](docs/MILESTONE1_COVERAGE.md): early milestone documents.

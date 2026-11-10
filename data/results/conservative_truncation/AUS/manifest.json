@@ -1,0 +1,31 @@
+{
+  "city": "AUS",
+  "margin": {
+    "margin_f": 1.0,
+    "quantile": 0.99,
+    "training_days": 23,
+    "first_fit_date": "2026-04-24",
+    "latest_fit_date": "2026-05-29",
+    "training_fraction_exceeding_margin": 0.0,
+    "training_max_positive_error_f": 1.0
+  },
+  "common_settings": {
+    "b0": 30,
+    "fee": 0.05,
+    "train_days": 23,
+    "mean_training_pnl": 10.59649005491203,
+    "sd_ref": 2.758968061051951
+  },
+  "minimum_minute_coverage": 0.8,
+  "last_information_date_allowed_for_fit": "2026-05-30",
+  "feed_delay_seconds": 300,
+  "test_days": 31,
+  "bootstrap_replicates": 1000,
+  "confirmation_status": "exploratory; known NYC failure motivated this experiment",
+  "contract_boundary_handling": "True infinite tails restored for every comparison; original plotting placeholders are not knockout boundaries.",
+  "input_sha256": {
+    "cities\\AUS\\markets.csv": "bff572e002ff7e0d944f351542f3e569027d67290485746a8bc161838f388fa5",
+    "raw\\realtime\\AUS\\asos1min.csv.gz": "bb26cac943a608860f495cf38c79f3b0c0f4afec78a6f113ee2fe049da61a52d",
+    "raw\\realtime\\AUS\\trades.csv.gz": "387bc9da1c23285885fae753336abf11ed86d9eb4dcd954b4cbb11fdb314b098"
+  }
+}

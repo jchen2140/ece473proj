@@ -1,0 +1,7 @@
+first,second,bootstrap_block_days,test_days,mean_pnl_difference,ci_low,ci_high
+current_truncation,forecast_only,1,23,59.154787087262804,-20.634719610977868,149.96200174503153
+conservative_truncation,forecast_only,1,23,0.0,0.0,0.0
+conservative_truncation,current_truncation,1,23,-59.154787087262804,-149.96200174503153,20.634719610977854
+current_truncation,forecast_only,7,23,59.154787087262804,-17.365874901337996,131.7778051168404
+conservative_truncation,forecast_only,7,23,0.0,0.0,0.0
+conservative_truncation,current_truncation,7,23,-59.154787087262804,-131.7778051168404,17.365874901337992

@@ -1,0 +1,31 @@
+{
+  "city": "LAX",
+  "margin": {
+    "margin_f": 52.0,
+    "quantile": 0.99,
+    "training_days": 27,
+    "first_fit_date": "2026-04-12",
+    "latest_fit_date": "2026-05-31",
+    "training_fraction_exceeding_margin": 0.0,
+    "training_max_positive_error_f": 52.0
+  },
+  "common_settings": {
+    "b0": 300,
+    "fee": 0.05,
+    "train_days": 27,
+    "mean_training_pnl": 76.05803649890792,
+    "sd_ref": 2.1241244694943755
+  },
+  "minimum_minute_coverage": 0.8,
+  "last_information_date_allowed_for_fit": "2026-06-02",
+  "feed_delay_seconds": 300,
+  "test_days": 23,
+  "bootstrap_replicates": 1000,
+  "confirmation_status": "exploratory; known NYC failure motivated this experiment",
+  "contract_boundary_handling": "True infinite tails restored for every comparison; original plotting placeholders are not knockout boundaries.",
+  "input_sha256": {
+    "cities\\LAX\\markets.csv": "b93088a98ecdb791252dfdf89ff757b86366342edebda198f1fc06c13d4e1a03",
+    "raw\\realtime\\LAX\\asos1min.csv.gz": "11720fc483ca5ba9e43ecdafb3c822931f20e227a79f70ec872bb5d2ececaf6d",
+    "raw\\realtime\\LAX\\trades.csv.gz": "27bf759413161de54c161eaeede33faafef71af4489b1eb851717c39004bf04d"
+  }
+}

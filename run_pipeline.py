@@ -38,6 +38,10 @@ ANALYSIS = [
     ('analysis.efficiency', [], '15-city information efficiency -> data/results/efficiency/'),
     ('analysis.latency', [], 'minute-level knock-out latency -> data/results/realtime/'),
     ('market.makers', [], 'domain market-maker ladder on 6 cities -> data/results/adaptive_mm/'),
+    ('market.mechanism', [], 'trust curve, prior forgetting, value of a minute -> data/results/mechanism/'),
+    ('market.conservative', ['--cities', 'NYC', 'LAX', 'AUS', 'MSP'], 'frozen sensor-margin truncation -> data/results/conservative_truncation/'),
+    ('market.cross_city', [], 'registered CHI replication (refuses changed strategy code) -> conservative_truncation/'),
+    ('market.conservative_summary', [], 'conservative truncation across cities -> conservative_truncation/six_city_summary.md'),
 ]
 
 
